@@ -1,253 +1,179 @@
-# React CRA 프로젝트
+# JSX 1
 
-- `Create React App` 의 줄임말
+- React 에서 사용하는 html 태그
+- 용도 : 컴포넌트 만들기
 
-## 1. VSCode 플러그인 설치
+## 1. Component 란?
 
-- ESLint : 필수 (추후 세팅)
-- Error Lens (JS 코드 에러 체크)
-- ES7+ React/Redux/React-Native snipp (React 단축키)
-- Prettier (기존에 설치했었음) : 포맷유지
-- Simple React Snippets :  (필수는 아니지만 좋은 기능)
+- HTML 태그 형태를 return 하는 함수
+- 화살표이든, 일반 함수이든 HTML 태그를 리턴하면 인정함
+- JSX 는 `반드시 하나의 태그` 에 `포함되도록 배치` 하여야 함
+- `<></>` 를 Fragment 라고 함
+- 파일명 및 Component 함수는 반드시 `Pascal case` 여야 함
 
-## 2. React Project 생성 규칙
+## 2. Component 와 Page 구분
 
-- Project 명은 (즉, 폴더명) 무조건 `소문자` 영문입니다. (대문자 절 대 XXXXXXXXX)
-- 폴더명에 특수기호는 `-` 이외에는 절대 금지. (`emotion-diary`)
-- 프로젝트를 생성하면 기본적으로 `git init`이 자동 세팅됨.
-- 숨김폴더에 있는 폴더 (.git)을 삭제한다.
-- 나중에 추가로 또 git remote add origin 필요. (자세한 설명은 Notion에.)
+- 폴더명은 반드시 소문자로 해야 함.
+- 한장의 HTML 을 구성한다면 `pages 폴더`에 저장
+- 하나의 HTML 을 완성하기 위한 배치 요소라면 `componets` 폴더에 저장
 
-## 3. 리엑트 프로젝트 `보일러블레이트`
+# CSS
 
-```bash
-npx create-react-app@latest . (원래는 . 대신 회사에서는 프로젝트명을 씀)
+## 1. JSX 에 css 추가하기
 
-git remote add origin 주소
-```
+- 일반적으로 `src 폴더 하단`에 css 폴더를 생성함
+- css 파일은 모두 이곳에 배치함 (혼자 할 경우. 협업 들어가면 다르게 함)
+- css 파일명은 `Component명`과 동일하게 `Pascal case` 를 사용함.
+- 예) Header.css / Footer.css / Slide.css
 
-## 4. 생성된 파일 살펴보기
+## 2. css 사용하기
 
-- 만약에 회사에 가면 기존 소스를 fork 받을 겁니다.
+### src/index.css
 
-### 4.1 `package.json` 최초로 알아야 하는 파일
-
-- node_modules 에 다운로드 받아서 파일을 관리하는 용도
-- 전체 프로젝트에서 활용한 npm 목록을 관리함
-- 절대로 package.json 은 삭제하면 안된다!!!!!!!!!!!!!!!!!!!!!!!! (절대 손대지않기 / 수정은 손으로도 하는거 아님.)
-
-- node_modules 폴더 다운 명령
-
-```bash
-npm install
-또는
-npm i
-```
-
-## 4.2 package.json 용어정리 (절대 손대선 안된다. 그냥 용어만 정리해줌)
-
-- package.json의 `dependencies` : 인터넷 홈페이지 웹에 올라가는 js 라이브러리 소스임.
-- package.json의 `scripts` : npm `명령어`
-
-```bash
-# 서비스 배포 버전 생성
-npm run build
-
-프로젝트 끝나고 서비스 들어가요~ 할 때 압축해서 백엔드팀 주면 된다.
-
-# 개발 버전 실행
-npm run start
-
-# test 버전 실행 : test Driven Develop (테스트 주도 개발)
-npm run test
-```
-
-- 우리는 당분간 testing은 하지 않을 거라서 package.json을 한번 수정해보는 작업을 해보자 (회사에선 절 대 안된다.)
-- package.json 을 수정합니다 (`testing 관련 npm 제거`)
-- `npm install` 하기 전에 반드시 `package-lock.json` 제거 후 진행
-
-### 4.2 `.gitignore` 파일
-
-- GitHub 에 업로드 되면 절대 안되는 파일과 폴더 목록 리스트
-- 실습
-- `.env` 파일 생성.
-
-```txt
-PASS=1234 를 적었음
-```
-
-- gitignore 에 .env 를 적었다.
-- git push 후 확인해보면 안올라간다.
-
-### 4.3 public 폴더 살펴보기
-
-- public 폴더는 `npm run build`시 압축제외 된다.
-- 우리가 필요로 한 image, fonts 와 같은 리소스를 배치함
-- favicon.ico : 즐겨찾기, 주소 공유시 보여질 아이콘
-- logo192.png, logo512.png : 휴대폰에서 바로가기 저장시 보여질 아이콘
-- mainifest.json : react도 웹 앱. 앱의 설명서 (PWA)
-- robots.txt : 웹 크롤링 허용 여부, 검색엔진 탐색 허용 여부
-- sitemap.xml : 검색엔진 노출 (생성 권장)
-
-#### 4.4 src 폴더 살펴보기
-
-### 4.4.1 파일 삭제 권장 항목
-
-- testing 항목 관련 파일 삭제 권장
-- 파일명에 `test`가 있거나 폴더가 `test 폴더`면 삭제.
-- `App.test.js`삭제
-- `setipTests.js` 삭제
-- `reportWebVitals.js` 삭제 (예쁘게 성능 표현 해주는 파일)
-- `logo.svg` 삭제
-
-#### 4.4.2 삭제 하지 않길 권장하는 파일
-
-- logo.svg 교체
-- index.js 삭제 금지
-- 하단 index.js 최종 모양
+- 기본적인 css 적용
+- index.js 에 적용되는 css
+- css 를 불러들이는 import 형태 확인
 
 ```js
-import React from "react";
-import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
 ```
 
-- App.js : 최초로 보여주는 내용 컴포넌트
-- 단축키 `rfce` : React Function Component Export 단축키
-- `rafce` :
+### src/pages/StartPage.jsx
 
-```js
+- src/css/StartPage.css 파일 생성
+- css 파일 불러들이기
+
+```jsx
+import "../css/StartPage.css";
+```
+
+- Footer.jsx
+
+```jsx
+import "../css/Footer.css";
+```
+
+- Header.jsx
+
+```jsx
+import "../css/Header.css";
+```
+
+- Slide.jsx
+
+```jsx
+import "../css/Slide.css";
+```
+
+## 3. 외부 css 라이브러리 사용하기
+
+### 3.1 링크 방식
+
+- 위처럼 React 에서 활용은 추천 하지 않습니다.
+- 일반 웹 퍼블리싱에서만 활용하시길 추천드립니다.
+- reset.css : https://meyerweb.com/eric/tools/css/reset/
+- nomalize.css : https://necolas.github.io/normalize.css/8.0.1/normalize.css
+- font-awsome : https://cdnjs.com/libraries/font-awesome
+- google-font : https://fonts.google.com/
+- public/index.html 파일에 추가
+
+### 3.2 npm 설치 방식 (권장)
+
+- https://www.npmjs.com/
+
+```bash
+npm install normalize
+npm i reset-css
+npm install react-icons --save
+# 안되면 --force 집어넣기
+```
+
+### 3.3 구글 폰트는 `index.css` 에서 작성 권장
+
+- index.css 에 모든 페이지에 적용되는 기본 파일임
+- link 방식보다는 @import url 방식 권장
+
+```bash
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+```
+
+## 4. 일반 css 적용해보기
+
+- css : `import "../css/StartPage.css";`
+- jsx : `<div className="box">로고</div>`
+- css 내용 : `.box {  background-color: red;}`
+
+- StartPage.jsx
+
+```jsx
 import React from "react";
+// css
+import "../css/StartPage.css";
+// components
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Slide from "../components/Slide";
 
-function App() {
-  // js 코딩자리
-  // return 자리에 html 태그 (jsx) 를 작성
-  return <div>App</div>;
+function StartPage() {
+  return (
+    <>
+      <div className="box">로고</div>
+      {/* 해더 컴포넌트 */}
+      <Header></Header>
+      {/* 슬라이드 컴포넌트 */}
+      <Slide></Slide>
+      {/* 분류메뉴 컴포넌트 */}
+      {/* 공지 컴포넌트 */}
+      {/* 추천 컴포넌트 */}
+      {/* 새목록 컴포넌트 */}
+      {/* 앱설치안내 컴포넌트 */}
+      {/* 하단 컴포넌트 */}
+      <Footer></Footer>
+    </>
+  );
 }
 
-export default App;
+export default StartPage;
 ```
 
-## 5. 협업 환경 세팅
+- StartPage.css
 
-### 5.1 (제일 중요한) ESLint 설정
+```css
+.box {
+  background-color: tomato;
+}
+```
 
-- 반드시 플러그인을 설치하고 진행해야 함.
-- 회사마다 ESLint 설정이 다름.
-- 반드시 회사 선임에게 물어보고 세팅하는 것을 추천
-- (터미널) npm install eslint@7 -D
-- 예시로 `ESLint 7` 버전으로 세팅해봤음.
+## 5. `module.css` 적용해 보기
 
-### 5.1.1 ESLint 7
+- index.css : 공통 적용 내용. (class 명 충돌 가능성 있음)
+- StartPage.css 를 파일명 변경 : `StartPage.module.css`
+- css 가 아니라 module.css 를 불러들임
 
-### 5.1.2 초기 ESLint 환경 설정 생성하기
+```jsx
+// import from "../css/StartPage.css"
+import styles from "../css/StartPage.module.css";
+```
 
-- 우선은 json 파일로 생성해줌 `.eslintrc.json`
+```jsx
+// <div className="box">로고</div> ← 원래 사용했던 문구
+<div className={styles.box}>로고</div>
+```
+
+## 6. SCSS 활용하기
+
+- 소스 가독성이 상당히 좋음
+- css 를 체계적으로 생성 및 관리
+
+### 6.1 SCSS npm 설치
+
+- VSCode 플러그인은 설치 되어있음. (Live sass compiler)
 
 ```bash
-npx eslint --init
+npm i sass -D (--force)
 ```
 
-### 5.2 Prettier 설정
+## 6.2 기본 폴더 생성
 
-- Prettier 는 VSCode 설치가 되어 있어야함.
-
-### 5.2.1 npm 설치
-
-```bash
-npm i prettier -D
-```
-
-#### 5.2.2 `prettierrc.json`
-
-- prettierrc.json 파일을 만든다.
-- 폴더 안에 하단 내용 복붙
-
-```json
-{
-  "singleQuote": false,
-  "semi": true,
-  "useTabs": false,
-  "tabWidth": 2,
-  "trailingComma": "all",
-  "printWidth": 80,
-  "arrowParens": "avoid",
-  "endOfLine": "auto"
-}
-```
-
-#### 5.3 ESLint 와 Prettier 와 통합 관리
-
-- ESLint 가 Prettier 규칙도 체크해 줬으면 좋겠음.
-
-  5.3.1 npm 설치
-
-```bash
-- npm i  eslint-config-prettier -D
-- npm i  eslint-plugin-prettier -D --force
-```
-
-#### 5.3.2 `.eslintrc.json` 파일 수정
-
-```json
-{
-  "env": {
-    "browser": true,
-    "es2021": true
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:prettier/recommended"
-  ],
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
-  "plugins": ["react"],
-  "rules": {}
-}
-```
-
-#### 5.3.2 설정 작동 확인
-- App.js 에 복사 붙여넣기
-
-```js
-import React from "react";
-
-function App() {
-  // js 코딩자리
-  var test = 1;
-  console.log(test);
-  // return 자리에 html 태그 (jsx) 를 작성
-  return <div>App</div>;
-}
-
-export default App;
-```
-### 5.4 ESLint 기본 사용법
-
-- rules 를 수정하시기를 추천
-
-```json
-"rules": {
-   "no-unused-vars": "off"
- }
-```
-
-### 5.5 VSCode 프로젝트 세팅
-- `.vscode` 파일 생성 후 그 안에 setting.json 파일 생성.
-- 하단에 복사 붙여넣기.
-```json
-{"editor.formatOnSave": true,
-
-"editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-},}
-```
+- src/scss 폴더 생성 권장
+- src/scss/test.scss 파일 생성
