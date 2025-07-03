@@ -1,0 +1,21 @@
+.title {
+  color: hotpink;
+  font-size: 40px;
+  text-align: center;
+}
+.content {
+  position: relative;
+  font-size: 20px;
+  text-align: center;
+  font-weight: 500;
+  color: red;
+}
+.slide {
+  background-color: yellow;
+  font-weight: 500;
+  margin: 20px 0;
+}
+.notice {
+  background-color: brown;
+  padding: 10px 0;
+}
