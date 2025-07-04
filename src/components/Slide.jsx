@@ -126,17 +126,18 @@ function Slide() {
           <ProgressBar percent={30} color="#f00" />
           <ProgressBar percent={50} color="#0f0" />
           <ProgressBar percent={80} color="#00f" />
-          <ProgressBar percent={100} color="#000" />
+          <ProgressBar percent={100} />
         </div>
         <div>
           <Skeleton width="80%" height="20px" />
           <Skeleton width="60%" height="10px" />
+          <Skeleton width="100%" height="400px" />
         </div>
-        <div>
-          <Tooltip text="click here">
-            <button>회원가입</button>
-          </Tooltip>
-        </div>
+      </div>
+      <div>
+        <Tooltip text="click here">
+          <button>회원가입</button>
+        </Tooltip>
       </div>
     </div>
   );
