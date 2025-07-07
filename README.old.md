@@ -1277,3 +1277,58 @@ function Tooltip({ children, text }) {
 
 export default Tooltip;
 ```
+
+# useState
+
+- React 에서 변수를 만드는 법
+- `변수의 값이 변하면 웹브라우저의 화면도 변함.`
+- 하단은 기본적인 useState
+
+```jsx
+const [변수명, set변수명] = useState(초기값);
+```
+
+```jsx
+import React, { use, useState } from "react";
+
+function Posts() {
+  // js 자리
+  // 변수의 값이 변하면 화면을 다시 ReRendering 했으면 좋겠다
+  // React 는 변수값이 변하면 ReRendering (다시랜더링) 함
+  // 값이 변하면 ReRendering 하라는 문법을 제공함
+  let postsArr = []; // 배열, js 문법
+
+  // React 에서 post 데이터 관리
+  const [postList, setPostList] = useState([]); // React
+
+  // React 에서 데이터 로딩중 인 것을 관리
+  let 지금 = "지금";
+  const [상태, set상태] = useState("데이터호출시작");
+
+  async function getPosts() {
+    try {
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      const result = await res.json();
+
+      지금 = "js: 지금 데이터 로딩완료";
+      set상태("React: 백엔드 데이터 로딩완료");
+      console.log(result);
+      postsArr = result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  getPosts();
+
+  // jsx 자리
+  return (
+    <div>
+      <h1>Posts</h1>
+      <div>js 의 지금 : {상태}</div>
+      <div>React 의 상태 : {상태}</div>
+    </div>
+  );
+}
+
+export default Posts;
+```
