@@ -9,16 +9,12 @@ import Photos from "./pages/Photos";
 import Todos from "./pages/Todos";
 import Users from "./pages/Users";
 import Comments from "./pages/Comments";
+import Test from "./pages/Test";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <div className="wrap">
-    <Posts></Posts>
-    <Albums></Albums>
-    <Photos></Photos>
-    <Todos></Todos>
-    <Users></Users>
-    <Comments></Comments>
+    <Test></Test>
   </div>,
 );

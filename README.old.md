@@ -5,8 +5,8 @@
 
 ## 1. Component 란?
 
-- HTML 태그 형태를 리턴하는 함수
-- 화살표(`rafce`) 이든, 일반함수(`rfce`) 이든 `HTML 태그를 리턴`하면 인정.
+- `HTML 태그 형태`를 리턴하는 함수
+- 화살표 함수(`rafce`)이든, 일반 함수(`rfce`) 이든 `HTML 태그를 리턴`하면 인정.
 - JSX 는 `반드시 하나의 태그`에 `포함되도록 배치`하여야 한다.
 - `<></>` 를 `Fragment` 라고 합니다.
 - 파일명 및 컴포넌트 함수는 반드시 `파스칼` 이어야 한다.
@@ -16,9 +16,8 @@
 - `폴더명은 반드시 소문자`로 하여야 한다.
 - 각 화면단위로 구성한다면 `pages 폴더`에 저장
 - `하나의 html 을 완성하기 위한 배치 요소`라면 `components 폴더`에 저장
-- `/src/components/소문자컴포넌트/대문자컴포넌트.jsx`
-- `/src/components/소문자컴포넌트/대문자컴포넌트.css`
--
+- `/src/components/소문자컴포넌트단어/Header.jsx`
+- `/src/components/소문자컴포넌트단어/Header.css`
 
 # css
 
@@ -128,13 +127,12 @@ import "../css/Slide.css";
 ### 3.2. npm 설치 방식 권장
 
 ```bash
-npm i normalize --force
-npm i font-awesome --force
-npm i reset-css --force
-npm install react-icons --save --force
+npm i normalize
+npm i reset-css
+npm install react-icons --save
 ```
 
-### 3.3. 폰트는 `index.css 에서 작성` 권장
+### 3.3. 구글폰트는 `index.css 에서 작성` 권장
 
 - index.css 에 모든 페이지에 적용되는 기본 파일이므로
 - link 방식 보다는 @import url 방식 권장
@@ -216,7 +214,7 @@ export default StartPage;
 - css 가 아니라 module.css 를 불러들임.
 
 ```jsx
-// import from "../css/StartPage.css"
+// import "../css/StartPage.css"
 import styles from "../css/StartPage.module.css";
 ```
 
@@ -225,51 +223,54 @@ import styles from "../css/StartPage.module.css";
 <div className={styles.box}>로고</div>
 ```
 
-## 6. scss 활용하기
+## 6. SCSS 활용하기
 
 - 소스 가독성이 상당히 좋다.
-- css 를 체계적으로 생성 및 관리
+- css 를 체계적으로 생성 및 관리.
 
-### 6.1. scss 설치하기
+### 6.1. SCSS npm 설치
+
+- VSCode 플러그인은 설치 되어 있음. (live sass compiler)
 
 ```bash
-npm i sass -D --force
+npm i sass -D
 ```
 
-## 6.2. 기본 폴더 생성
+### 6.2. 기본 폴더 생성
 
 - src/scss 폴더 생성 권장
 - src/scss/test.scss 파일 생성
-- `Watching Sass...` 실행
+- `Watch Sass...` 실행
 
 ### 6.3. 중첩(Nesting)
 
 ```scss
 .wrap {
   position: relative;
-}
-.wrap .notice {
-  width: 800px;
-  height: 400px;
-}
-.wrap a {
-  display: block;
-}
-.wrap:hover {
-  background-color: red;
-}
-.wrap span {
-  display: block;
+  .notice {
+    width: 800px;
+    height: 400px;
+    a {
+      display: block;
+      &:hover {
+        background-color: red;
+      }
+      span {
+        display: block;
+      }
+    }
+  }
 }
 ```
 
-### 6.4. 변수(Variable)
+### 6.4. 변수
 
-- 변수는 `$` 를 사용한다.
+- 변수는 `$`기호를 사용한다.
 - 가능하면 외부파일로 생성하시길 권장
-- 변수만 모은 파일명은 `_파일명.scss` 은 `css 생성을 하지 않는게` 좋다.
+- 변수만 모은 파일명은 `_파일명.scss`은 `css 생성을 하지 않는게` 좋아요.
 
 ```scss
+// 변수만들기
 $width-800: 800px;
 $height-400: 400px;
 $red: red;
@@ -279,52 +280,77 @@ $red: red;
   .notice {
     width: $width-800;
     height: $height-400;
-  }
-  a {
-    display: block;
-  }
-  &:hover {
-    background-color: $red;
-  }
-  span {
-    display: block;
+    a {
+      display: block;
+      &:hover {
+        background-color: $red;
+      }
+      span {
+        display: block;
+      }
+    }
   }
 }
 ```
 
-- 변수만 모은 `_val.scss`, `_color.scss` 파일 생성
+- 변수만 모은 `_val.scss`, `_color.scss`
+
+```scss
+// _val.css
+$red: red;
+```
 
 ```scss
 // _val.scss
 $width-800: 800px;
 $height-400: 400px;
+```
 
-// _color.scss
-$red: red;
+```scss
+// test.scss
+@import "val";
+@import "color";
+
+.wrap {
+  position: relative;
+  .notice {
+    width: $width-800;
+    height: $height-400;
+    a {
+      display: block;
+      &:hover {
+        background-color: $red;
+      }
+      span {
+        display: block;
+      }
+    }
+  }
+}
 ```
 
 ### 6.5. 함수
 
-- `파일명은 _ 붙이고 생성`, css 생성되지 않도록
+- `파일명은 _붙이고 생성`, css 생성되지 말도록.
 - `src/scss/_mixins.scss` 파일 생성
 
 ```scss
+// _mixins.scss
 @mixin flex-center-center {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 @mixin border-line($num, $cc) {
-  border: $num solid $cc;
+  border: $num solide $cc;
 }
 ```
 
 ```scss
-// 변수만들기
+// test.scss
+// 변수 사용하기
 @import "val";
 @import "color";
-
 // 함수 사용하기
 @import "mixins";
 
@@ -333,7 +359,7 @@ $red: red;
   @include flex-center-center;
   .notice {
     @include flex-center-center;
-    @include border-line(5px, #ff0000);
+    @include border-line(50px, #ff0000);
     width: $width-800;
     height: $height-400;
     a {
@@ -352,7 +378,7 @@ $red: red;
 ### 6.6. `React 에서 scss` 쓰기로 했다면?
 
 - 반드시 `npm i sass -D` 가 되었다는 전제로 진행 가능.
-- `Watch Sass...` 꼭 꺼야함. ( 불필요한 css를 생성하지 않기 )
+- `Watch Sass...` 꼭 끄셔서 불필요한 css 생성하지 마셔요.
 - pages/StartPage.scss 파일 생성
 
 ```jsx
@@ -367,12 +393,12 @@ import styles from "./StartPage.module.scss";
 <div className={styles.wrap}></div>;
 ```
 
-# 7. JSX 2
+# JSX 2.
 
 ## 1. JSX 에서 변수 사용하기
 
-- 값의 종류 : 글자, 숫자, null, undefined, boolean, { }, [ ] 등
-- 보간법을 이용하기 : (중괄호 표현법)
+- 값의 종류 : 글자, 숫자, null, undefined, boolean, [], {}
+- 보간법(`{}`)을 이용하기 : 중괄호 표현법
 
 ```js
 import React from "react";
@@ -509,53 +535,27 @@ export default Header;
 
 ## 3. css 에 객체를 별도로 모아서 관리하기
 
-- 위의 css `객체를 객체 리터럴 오브젝트 방식`
-- 관례상 css 객체는 `Pascal Case` 를 씀
-- /pages/bg.js 파일 생성
+- 위의 css 객체를 `객체 리터럴 오브젝트 방식` 칭함
+- 관례상 css 객체는 `파스칼` 케이스를 씁니다.
+- /componets/bg.js 파일 생성
 
 ```js
-// export = 가져가!
 export const BgObj = {
   backgroundColor: "green",
   color: "#fff",
   border: "5px solid hotpink",
 };
-export const BgObjRed = {
+
+const BgObjRed = {
   backgroundColor: "red",
   color: "#fff",
   border: "5px solid hotpink",
 };
+
+export default BgObjRed;
 ```
 
 ```jsx
-import React from "react";
-import { BgObj, BgObjRed } from "./bg";
-
-function Header() {
-  // js 코딩자리
-  const title = "웹 서비스 제목";
-  const version = 0.5;
-  function say() {
-    return "하하하";
-  }
-
-  const isLogin = true;
-
-  // html jsx 코드 자리
-  return (
-    <div>
-      <div style={isLogin ? BgObj : BgObjRed}>{title}</div>
-      <div>
-        버전:{version} {say()}
-      </div>
-    </div>
-  );
-}
-
-export default Header;
-```
-
-```js
 import React from "react";
 import BgObjRed, { BgObj } from "./bg";
 
@@ -587,13 +587,13 @@ export default Header;
 
 - Styled Component
 - Emotion
+- https://velog.io/@favorcho/Emotion-소개-및-사용하기
 
 ## 1. 환경설정
 
 ```bash
-npm i @emotion/react @emotion/styled (--force)
+npm i @emotion/react @emotion/styled
 
-혹은
 npm i @emotion/react
 npm i @emotion/styled
 ```
@@ -611,7 +611,6 @@ npm i @emotion/styled
 - import 해서 사용할 수 있습니다.
 
 ```jsx
-// Emotion 기본형과 Props 전달의 예제
 // Emotioin 기본형과 Props 전달의 예제
 import React from "react";
 import "../css/Slide.css";
@@ -697,7 +696,7 @@ function Slide() {
     <div style={{ padding: "30px" }}>
       <h1>CSS-in-JS 예제</h1>
       <BasicButton>기본버튼</BasicButton>
-      <DangerButton>경고버튼</DangerButton>
+      <DangerButton>위험한 경고 버튼</DangerButton>
     </div>
   );
 }
@@ -706,6 +705,8 @@ export default Slide;
 ```
 
 ## 3. 재활용 컴포넌트로 제작하기
+
+- 1차 버전
 
 ```jsx
 import React from "react";
@@ -720,6 +721,7 @@ function Slide() {
         : props.variant === "danger"
           ? "#dc3545"
           : "#6c757d"};
+
     color: white;
     padding: ${props => (props.size === "lg" ? "12px 24px" : "8px 16px")};
     border: none;
@@ -737,17 +739,17 @@ function Slide() {
     <div style={{ padding: "30px" }}>
       <h1>CSS-in-JS 예제</h1>
       <Button variant="primary" size="lg">
-        기본버튼 : Large 사이즈
+        기본버튼 : large 버튼
       </Button>
-      <br />
       <Button variant="primary">기본버튼</Button>
+
       <br />
       <br />
+
       <Button variant="danger" size="lg">
-        위험 : Large
+        경고버튼 : large 경고버튼
       </Button>
-      <br />
-      <Button variant="danger">위험</Button>
+      <Button variant="danger">경고</Button>
     </div>
   );
 }
@@ -757,7 +759,7 @@ export default Slide;
 
 - 2차 버전
 
-```jsx
+```js
 import React from "react";
 import "../css/Slide.css";
 import styled from "@emotion/styled";
@@ -790,7 +792,7 @@ function Slide() {
     opacity: ${props => (props.disabled ? 0.6 : 1.0)};
 
     &:hover {
-      opacity: 0.8;
+      opacity: ${props => (props.disabled ? 0.6 : 0.8)};
     }
   `;
   // jsx 자리
@@ -836,12 +838,11 @@ function Slide() {
 export default Slide;
 ```
 
-- 3차 최종 버전 (components/ui폴더/Button.jsx)
+- 3차 최종버전 (components/ui폴더/Button.jsx)
 
-```jsx
+```js
 import React from "react";
 import styled from "@emotion/styled";
-
 function Button(props) {
   // js 자리
   const Button = styled.button`
@@ -871,11 +872,10 @@ function Button(props) {
     opacity: ${props => (props.disabled ? 0.6 : 1.0)};
 
     &:hover {
-      opacity: 0.8;
+      opacity: ${props => (props.disabled ? 0.6 : 0.8)};
     }
   `;
   // jsx 자리
-
   return (
     <Button variant={props.variant} size={props.size} disabled={props.disabled}>
       {props.children}
@@ -886,9 +886,9 @@ function Button(props) {
 export default Button;
 ```
 
-- 추천함 (props 는 객체 구조 분해 할당 권장)
+- 추천합니다. (props 는 객체 구조 분해 할당 권장)
 
-```jsx
+```js
 import React from "react";
 import styled from "@emotion/styled";
 function Button({
@@ -939,11 +939,13 @@ function Button({
 export default Button;
 ```
 
-```jsx
+- 응용 예제
+
+```js
 import styled from "@emotion/styled";
 import React from "react";
 
-function Tag({ children, variant = "defualt", rounded = false, size = "md" }) {
+function Tag({ children, variant = "default", rounded = false, size = "md" }) {
   // js 자리
   const StyleTag = styled.span`
     display: inline-block;
@@ -962,7 +964,7 @@ function Tag({ children, variant = "defualt", rounded = false, size = "md" }) {
       }
     }};
     color: #fff;
-    border-radius: ${props => (props.rounded ? "30px" : "15px")};
+    border-radius: ${props => (props.rounded ? "10px" : "3px")};
     padding: ${props => (props.size === "lg" ? "6px 12px" : "4px 8px")};
     font-size: ${props => (props.size === "lg" ? "14px" : "12px")};
     margin-right: 6px;
@@ -981,7 +983,7 @@ function Tag({ children, variant = "defualt", rounded = false, size = "md" }) {
 export default Tag;
 ```
 
-- Avatar 예제
+- Avart 예제
 
 ```jsx
 import styled from "@emotion/styled";
@@ -999,7 +1001,7 @@ function Avatar({
     width: ${props => props.size};
     height: ${props => props.size};
     object-fit: cover;
-    border: 1px solid rgba(0, 0, 0, 0.5);
+    border: 3px solid rgba(0, 0, 0, 0.5);
     box-shadow: 0px 2px 6px rgba(0, 0, 0, ${props => (props.shadow ? 0.3 : 0)});
   `;
 
@@ -1037,13 +1039,13 @@ function Toast({ message = "Please Message", bg = "#ccc" }) {
 export default Toast;
 ```
 
-- Alert Sample
+- Alert 샘플
 
-```jsx
+```js
 import styled from "@emotion/styled";
 import React from "react";
 
-function Alert({ children, type = "defualt" }) {
+function Alert({ children, type = "default" }) {
   // js 자리
   const StyledAlert = styled.div`
     background-color: ${props => {
@@ -1080,6 +1082,7 @@ function Alert({ children, type = "defualt" }) {
     margin: 10px 0;
     border: 1px solid transparent;
   `;
+
   // jsx 자리
   return <StyledAlert type={type}>{children}</StyledAlert>;
 }
@@ -1087,9 +1090,9 @@ function Alert({ children, type = "defualt" }) {
 export default Alert;
 ```
 
-- Chip Sample
+- Chip 예제
 
-```jsx
+```js
 import styled from "@emotion/styled";
 import React from "react";
 
@@ -1127,9 +1130,9 @@ function Chip({ label = "Label" }) {
 export default Chip;
 ```
 
-- Modal Sample
+- Modal 예제
 
-```jsx
+```js
 import styled from "@emotion/styled";
 import React from "react";
 
@@ -1142,11 +1145,12 @@ function Modal({ children }) {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999999;
+    z-index: 99999999;
     display: flex;
     align-items: center;
     justify-content: center;
   `;
+
   const ModalBox = styled.div`
     background-color: #fff;
     padding: 30px;
@@ -1155,7 +1159,6 @@ function Modal({ children }) {
     min-height: 200px;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
   `;
-
   // jsx 자리
   return (
     <Overlay>
@@ -1167,7 +1170,7 @@ function Modal({ children }) {
 export default Modal;
 ```
 
-- ProgressBar Sample
+- ProgressBar 예제
 
 ```jsx
 import styled from "@emotion/styled";
@@ -1187,10 +1190,9 @@ function ProgressBar({ percent = 0, color = "#000" }) {
     height: 100%;
     background-color: ${props => props.color};
     width: ${props => props.percent}%;
-    transition: width 0.5s;
+    transition: all 0.5s;
   `;
   // jsx 자리
-
   return (
     <BarWrapper>
       <BarInner percent={percent} color={color} />
@@ -1201,7 +1203,7 @@ function ProgressBar({ percent = 0, color = "#000" }) {
 export default ProgressBar;
 ```
 
-- Skeleton Sample : https://cssgradient.io/
+- Skeleton 예제 : https://cssgradient.io/
 
 ```jsx
 import { keyframes } from "@emotion/react";
@@ -1233,7 +1235,7 @@ function Skeleton({ width = "100%", height = "20px" }) {
 export default Skeleton;
 ```
 
-- Tooltip.jsx
+- Tooltip 예제
 
 ```jsx
 import styled from "@emotion/styled";
@@ -1278,57 +1280,258 @@ function Tooltip({ children, text }) {
 export default Tooltip;
 ```
 
-# useState
+# JSX 의 조건문
 
-- React 에서 변수를 만드는 법
-- `변수의 값이 변하면 웹브라우저의 화면도 변함.`
-- 하단은 기본적인 useState
+## 1. 기본 문법
 
-```jsx
-const [변수명, set변수명] = useState(초기값);
+- falshy 한 값 종류 : `false, null, undefined, 0, "", NaN `
+- if 문
+
+```js
+if (조건) {
+  // 참일때 실행
+}
+```
+
+- if ~ else
+
+```js
+if (조건) {
+  // 참일때
+} else {
+  // 거짓일때
+}
+```
+
+- if ~ else if ~ else
+
+```js
+if (조건) {
+  // 참일 때 실행
+} else if (조건) {
+  // 참일 때 실행
+} else {
+  // 거짓일때
+}
+```
+
+- 3항 연산자
+
+```js
+const res = 조건 ? 참일때 리턴 : 거짓일때 리턴;
+```
+
+- 논리 연산자
+
+```js
+const res = 조건 && 결과 리턴;
+const res = 조건 || 결과 리턴;
 ```
 
 ```jsx
-import React, { use, useState } from "react";
+isLogin && <div>결과</div>;
+```
 
-function Posts() {
+- 옵셔널(`?`) 체이닝(`.`) : `객체?.속성명`
+
+```js
+const user = { age: 10, job: "개발자" };
+const result = user?.age;
+```
+
+- Null 병합 연산자(`??`) : null 또는 undefined 일때만 기본값 사용
+
+```js
+const user = { age: 10, job: "개발자" };
+const result = user.gogo ?? "없어요";
+```
+
+- switch
+
+```js
+switch(결과값){
+  case 비교값1;
+      break;
+  case 비교값2;
+      break;
+  default :
+     break;
+}
+```
+
+## 2. JSX 에서의 활용
+
+- `JS 자리`에 if 문과 switch 문을 사용할 수 있음.
+
+- `JSX 자리`에 if 문과 switch 문을 사용할 수 없음.
+- if 문과 switch 문 대신에 `3 항 연산자`가 가장 많이 사용됨.
+- `JSX 자리`에 falshy 한 값은 출력이 안됩니다.
+
+### 2.1. if 문 활용
+
+```jsx
+import React from "react";
+
+// 파일로 만들지 않은  컴포넌트
+function Hi({ isLogin }) {
   // js 자리
-  // 변수의 값이 변하면 화면을 다시 ReRendering 했으면 좋겠다
-  // React 는 변수값이 변하면 ReRendering (다시랜더링) 함
-  // 값이 변하면 ReRendering 하라는 문법을 제공함
-  let postsArr = []; // 배열, js 문법
-
-  // React 에서 post 데이터 관리
-  const [postList, setPostList] = useState([]); // React
-
-  // React 에서 데이터 로딩중 인 것을 관리
-  let 지금 = "지금";
-  const [상태, set상태] = useState("데이터호출시작");
-
-  async function getPosts() {
-    try {
-      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-      const result = await res.json();
-
-      지금 = "js: 지금 데이터 로딩완료";
-      set상태("React: 백엔드 데이터 로딩완료");
-      console.log(result);
-      postsArr = result;
-    } catch (error) {
-      console.log(error);
-    }
+  if (isLogin) {
+    return <div>반가워요</div>;
   }
-  getPosts();
+  // jsx 자리
+  return <div>안녕</div>;
+}
 
+function Test() {
+  // js 자리
+  // jsx 자리
+  return <Hi isLogin={true}>Test</Hi>;
+}
+
+export default Test;
+```
+
+### 2.2. jsx 에서 3항 연산자
+
+```jsx
+import React from "react";
+
+// 파일로 만들지 않은  컴포넌트
+function Hi({ isLogin }) {
+  // js 자리
+  // jsx 자리
+  return <div>{isLogin ? "반가워요" : "로그인하세요."}</div>;
+}
+
+function Test() {
+  // js 자리
+  // jsx 자리
+  return <Hi isLogin={true}>Test</Hi>;
+}
+
+export default Test;
+```
+
+### 2.3. jsx 에서 && 연산자 활용
+
+```jsx
+import React from "react";
+
+// 파일로 만들지 않은  컴포넌트
+function Hi({ isLogin, msg }) {
+  // js 자리
   // jsx 자리
   return (
     <div>
-      <h1>Posts</h1>
-      <div>js 의 지금 : {상태}</div>
-      <div>React 의 상태 : {상태}</div>
+      {isLogin ? "반가워요" : "로그인하세요."}
+      <div>{msg && "메시지가 있습니다."}</div>
     </div>
   );
 }
 
-export default Posts;
+function Test() {
+  // js 자리
+  // jsx 자리
+  return (
+    <Hi isLogin={true} msg={"새로운메시지"}>
+      Test
+    </Hi>
+  );
+}
+
+export default Test;
 ```
+
+### 2.4 jsx 에서 ?. 연산자 활용 (옵셔널체이닝)
+
+- `객체?.속성명`
+- 객체가 null 이거나 undefined 이면 React 오류
+- 복잡한 if 문 대신 옵셔널 체이닝을 많이 씀
+
+```jsx
+import React from "react";
+
+// 파일로 만들지 않은  컴포넌트
+function Hi({ isLogin, msg, user }) {
+  // js 자리
+  // jsx 자리
+  return (
+    <div>
+      {isLogin ? "반가워요" : "로그인하세요."}
+      <div>{msg && "메시지가 있습니다."}</div>
+      <div>
+        {user?.name} : {user?.age ? user?.age : "나이가없어요"}
+      </div>
+      <div>
+        {user?.name} : {user?.age || "나이가 없어요"}
+      </div>
+    </div>
+  );
+}
+
+function Test() {
+  // js 자리
+  // jsx 자리
+  return (
+    <Hi isLogin={true} msg={"새로운메시지"} user={{ name: "문유비" }}>
+      Test
+    </Hi>
+  );
+}
+
+export default Test;
+```
+
+# JSX 의 반복문
+
+## 1. map 의 이해
+
+- 일반적으로 가장 많이 사용함
+- 컴포넌트 또는 html 태그를 반복 출력시 활용
+- 반드시 대상은 `배열` 임
+- 반드시 `key 속성 즉, props가 있어야 함.`
+
+```jsx
+import React, { useState } from "react";
+
+// 파일로 만들지 않은  컴포넌트
+function Hi({ data }) {
+  // js 자리
+  // jsx 자리
+  return <div>{data?.name}님 안녕</div>;
+}
+
+function Test() {
+  // js 자리
+  const [userData, setUserData] = useState([
+    { name: "hong", age: 10 },
+    { name: "park", age: 15 },
+    { name: "son", age: 18 },
+    { name: "kim", age: 25 },
+  ]);
+
+  // jsx 자리
+  return (
+    <>
+      <h2>회원전체 명단: map 활용</h2>
+      <div>
+        {userData.map(function (item, index) {
+          return <Hi key={index} data={item}></Hi>;
+        })}
+      </div>
+      <h2>연령이 10대인 회원 명단 : filter 활용</h2>
+      <div>
+        {userData
+          .filter((item, index) => item.age < 20)
+          .map((item, index) => (
+            <Hi data={item} key={index}></Hi>
+          ))}
+      </div>
+    </>
+  );
+}
+
+export default Test;
+```
+
+## 2. filter 의 이해
