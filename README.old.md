@@ -1,47 +1,32 @@
-# 리액트 Event
+# useState
 
-- 사용자의 인터렛션 (마우스 관련, 내용 입력 등등)
-- `카멜케이스`임
-
-## 1. 이벤트 종류
-
-- onClick : 마우스 클릭
-- onChange : form 태그의 내용이 바뀔 때
-- onSubmit : form 을 확인해서 전송할 때
-- onKeyDown : 키보드를 누를 때
-- onKeyUp : 키보드를 뗄 때
-- onMouseEnter : 마우스 커서가 영역에 걸쳐질 때
-- onMouseLeave : 마우스 커서가 영역에서 벗어날 때
-- onFocus : form 요소에 포커스가 될 때
-- onBlur : form 요소에 포커스가 해제될 때
-- onInput : form 요소에 입력 될 때 마다
-- onDoubleClick : 더블 클릭 할 때
-
-## 2. 예제
-
-- 매개변수가 `없는 경우` 와 `존재하는 경우` 를 꼭 구분해야함
-
-### 2.1 onClick 이벤트
+- 리액트에서 변수를 만드는 법
+- `변수의 값이 변하면 웹브라우저의 화면도 변한다.`
 
 ```jsx
+const [변수명, set변수명] = useState(초기값);
+```
+
+## 1. 일반 js 라면 ?
+
+- 화면에 초기 값만 보이고 변화가 없음
+
+```js
 import React from "react";
 
 function Test() {
   // js 자리
-  const handleClick = () => {
-    alert("클릭");
-  };
-  const handleClickParam = a => {
-    alert(a);
+  let count = 0; // js 변수
+  const add = () => {
+    count = count + 1;
+    console.log(count);
   };
 
   // jsx 자리
   return (
     <div>
-      <button onClick={handleClick}>매개변수 없는 클릭이벤트</button>
-      <button onClick={() => handleClickParam("안녕")}>
-        매개변수가 존재하는 클릭이벤트
-      </button>
+      <button onClick={add}>함수실행</button>
+      <p>count : {count} </p>
     </div>
   );
 }
@@ -49,87 +34,66 @@ function Test() {
 export default Test;
 ```
 
-### 2.2 onChange 이벤트
+## 2. React 변수라면 ?
 
-- event.taget : 현재는 input 태그를 가르킴
-- event.taget.value : 현재 input 태그의 값 (내용을 말함)
+- 값이 set 으로 변하면 화면도 새로 그림
+
+```js
+import React, { useState } from "react";
+
+function Test() {
+  // js 자리
+  const [count, setCount] = useState(0); // js 변수
+  const add = () => {
+    setCount(count + 1);
+    console.log(count);
+  };
+
+  // jsx 자리
+  return (
+    <div>
+      <button onClick={add}>함수실행</button>
+      <p>count : {count} </p>
+    </div>
+  );
+}
+
+export default Test;
+```
+
+## 3. 다양한 예제
 
 ```jsx
 import React, { useState } from "react";
 
 function Test() {
   // js 자리
-  const [txt, setTxt] = useState("");
-  // jsx 자리
-  return (
-    <div>
-      <input type="text" onChange={event => setTxt(event.target.value)} />
-      <p>입력된 값:{txt}</p>
-    </div>
-  );
-}
-
-export default Test;
-```
-
-### onSubmit 이벤트 (아주 중요함)
-
-```jsx
-import React from "react";
-
-// 백엔드에 데이터를 보낼 때
-function Test() {
-  const handleSubmit = event => {
-    // 반드시 체크해야함
-    event.preventDefault(); // 새로고침 막기 (새로고침을 할 경우 js 코드가 날아감)
-    console.log(event.target);
-    console.log(event.target.id);
-    console.log(event.target.id.value);
-    console.log(event.target.pw);
-    console.log(event.target.pw.value);
-    if (!event.target.id.value) {
-      alert("아이디를 입력하세요");
-    }
-    if (!event.target.pw.value) {
-      alert("비밀번호를 입력하세요");
-    }
-    alert("로그인 시도 중");
+  const [userName, setUserName] = useState("");
+  const handleChange = e => {
+    // setUserName(e.target.value); //e.target = HTML 태그, value = e
   };
-  return (
-    <div>
-      <form onSubmit={e => handleSubmit(e)}>
-        <input type="text" name="id" />
-        <input type="password" name="pw" />
-        <input type="submit" name="제출" />
-      </form>
-    </div>
-  );
-}
-
-export default Test;
-```
-
-### 2.4 Keyboard (키보드) 이벤트
-
-- onKeyDown 은 키보드 누르고 있으면 무한하게 발생한다. (조심해서 사용해야함. 주로 게임에서 많이 쓰임)
-- onKeyUp 은 키보드에서 뗐을 때. (주로 `Enter키 눌렀다가 뗐을 때`)
-
-```jsx
-import React from "react";
-
-function Test() {
-  // js 자리
-  const handleSearch = e => {
-    console.log(e.target);
-    const txt = e.target.value;
+  const handleKeyUp = e => {
     if (e.key === "Enter") {
-      alert(`${txt} 검색합니다.`);
+      const txt = e.target.value;
+      // 추후 yup 라이브러리 사용해볼 것임.
+      if (!txt) {
+        alert("이름을 다시 입력해주세요.");
+        return;
+      }
+      setUserName(txt);
     }
   };
   // jsx 자리
   return (
     <div>
-      <input type="text" name="id" onKeyUp={e => handleSearch(e)} />
+      <h1>사용자 이름을 입력하면 이름 출력하기</h1>
+      <input
+        type="text"
+        onChange={e => handleChange(e)}
+        onKeyUp={e => handleKeyUp(e)}
+        placeholder="이름을 입력하세요."
+      />
+      <h2>안녕하세요. {userName} 님 반갑습니다.</h2>
     </div>
   );
 }
@@ -137,53 +101,132 @@ function Test() {
 export default Test;
 ```
 
-### 2.5 Mouse (마우스) 이벤트
-
-- onMouseOver, onMouseOut : 사용 X
-- onMouseEnter, onMouseLeave : 이걸 사용해야 함.
-
 ```jsx
-import React from "react";
+import React, { useState } from "react";
 
 function Test() {
   // js 자리
-  const handleOver = () => {
-    console.log("마우스 오버");
-  };
-  const handleOut = () => {
-    console.log("마우스 아웃");
-  };
-  // jsx 자리
-  return (
-    <div onMouseEnter={handleOver} onMouseLeave={handleOut}>
-      <div style={{ border: "5px solid red", margin: "20px" }}>박스1</div>
-      <div style={{ border: "5px solid blue", margin: "20px" }}>박스2</div>
-    </div>
-  );
-}
-
-export default Test;
-```
-
-### 2.6 Focus 이벤트
-
-- onFocus, onBlur : 포커스가 된 경우와 포커스가 해제 된 경우 (input 태그)
-
-```jsx
-import React from "react";
-
-function Test() {
-  // js 자리
-  const handleFocus = () => {
-    console.log("포커스 됨");
-  };
-  const handleBlur = () => {
-    console.log("포커스 해제 됨");
+  const [agree, setAgree] = useState(false);
+  const handleChange = e => {
+    console.log(e.target);
+    console.log(e.target.value);
+    setAgree(e.target.checked);
   };
   // jsx 자리
   return (
     <div>
-      <input type="text" onFocus={handleFocus} onBlur={handleBlur}></input>
+      <label>
+        <input type="checkbox" onChange={e => handleChange(e)} />
+        약관에 동의합니다.
+      </label>
+      <p>{agree ? "동의합니다" : "동의가 필요합니다"}</p>
+    </div>
+  );
+}
+
+export default Test;
+```
+
+- 더 쉽고 깔끔하게 하는 방법
+
+```jsx
+import React, { useState } from "react";
+
+function Test() {
+  const [agree, setAgree] = useState(false);
+
+  return (
+    <div>
+      <label>
+        <input
+          type="checkbox"
+          checked={agree}
+          onChange={e => setAgree(e.target.checked)}
+        />
+        약관에 동의합니다.
+      </label>
+      <p>{agree ? "동의합니다" : "동의가 필요합니다"}</p>
+    </div>
+  );
+}
+
+export default Test;
+```
+```jsx
+import React, { useState } from "react";
+
+function Test() {
+  const [todoList, setTodoList] = useState([]); // 할 일 목록
+  const [text, setText] = useState("");         // 입력창 내용
+
+  // 입력창이 바뀔 때마다 text 상태를 업데이트
+  const handleInputChange = e => {
+    setText(e.target.value);
+  };
+
+  // 버튼 눌렀을 때 목록에 추가
+  const handleClick = () => {
+    if (text.trim() === "") return; // 빈칸이면 추가 안 함
+    setTodoList([...todoList, text]); // 기존 목록 + 새로운 할일
+    setText(""); // 입력창 비우기
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={text}
+        onChange={handleInputChange}
+        placeholder="할 일을 입력하세요"
+      />
+      <button onClick={handleClick}>목록추가</button>
+
+      <ul>
+        {todoList.map((item, index) => (
+          <li key={index}>{item}</li> // 할 일 목록 표시
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default Test;
+```
+- txt 바꾸기
+```jsx
+import React, { useState } from "react";
+
+function Test() {
+  const [todoList, setTodoList] = useState([]); // 할 일 목록
+  const [text, setText] = useState("");         // 입력창 내용
+
+  // 입력창이 바뀔 때마다 text 상태를 업데이트
+  const handleInputChange = e => {
+    setText(e.target.value);
+  };
+
+  // 버튼 눌렀을 때 목록에 추가
+  const handleClick = () => {
+    if (text.trim() === "") return; // 빈칸이면 추가 안 함
+    setTodoList([...todoList, text]); // 기존 목록 + 새로운 할일
+    setText(""); // 입력창 비우기
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={text}
+        onChange={handleInputChange}
+        placeholder="할 일을 입력하세요"
+      />
+      <button onClick={handleClick}>목록추가</button>
+
+      <ul>
+        {todoList.map((item, index) => (
+          <li key={index}>{item}</li> // 할 일 목록 표시
+        ))}
+      </ul>
     </div>
   );
 }
