@@ -1,36 +1,58 @@
 import React, { useState } from "react";
+import LoginForm from "../components/form/LoginForm";
 
 function Test() {
-  const [todoList, setTodoList] = useState([]); // 할 일 목록
-  const [text, setText] = useState(""); // 입력창 내용
+  // js 자리
+  // 변수 관리
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // 입력창이 바뀔 때마다 text 상태를 업데이트
-  const handleInputChange = e => {
-    setText(e.target.value);
+  // 모든 데이터가 모여지는 변수다.
+  const [formData, setFormData] = useState({
+    user_id: "",
+    user_email: "",
+    user_pw: "",
+  });
+  const handleChange = e => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setFormData({ ...formData, [name]: value });
   };
 
-  // 버튼 눌렀을 때 목록에 추가
-  const handleClick = () => {
-    if (text.trim() === "") return; // 빈칸이면 추가 안 함
-    setTodoList([...todoList, text]); // 기존 목록 + 새로운 할일
-    setText(""); // 입력창 비우기
-  };
+  const handleSubmit = e => {
+    // 웹브라우저 새로고침 방지 (prevent:방어하다)
+    e.preventDefault();
+    if (formData.user_id === "") {
+      setErrorMessage("Please Enter your ID");
+      return;
+    }
+    if (formData.user_email === "") {
+      setErrorMessage("Please Enter your E-mail");
+      return;
+    }
+    if (formData.user_pw === "") {
+      setErrorMessage("Please Enter your Password");
+      return;
+    }
+    console.log("BE로 Data 전송");
 
+    // QueryString 으로 보내기
+    console.log(
+      `/login/?id=${formData.user_id}&email=${formData.user_email}&pw=${formData.user_pw}`,
+    );
+    // 객체로 보내기
+    const data = { ...formData };
+    setErrorMessage("");
+  };
+  // jsx 자리
   return (
     <div>
-      <input
-        type="text"
-        value={text}
-        onChange={handleInputChange}
-        placeholder="할 일을 입력하세요"
+      <h1>회원로그인</h1>
+      <LoginForm
+        formData={formData}
+        errorMessage={errorMessage}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
       />
-      <button onClick={handleClick}>목록추가</button>
-
-      <ul>
-        {todoList.map((item, index) => (
-          <li key={index}>{item}</li> // 할 일 목록 표시
-        ))}
-      </ul>
     </div>
   );
 }
