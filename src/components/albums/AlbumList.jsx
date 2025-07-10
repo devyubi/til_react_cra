@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-function PostList({ id, title, body, userid }) {
+function AlbumList({ userid, id, title }) {
   // js 자리
-  const PostCard = styled.div`
+  const AlbumCard = styled.div`
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
@@ -17,32 +17,25 @@ function PostList({ id, title, body, userid }) {
       transform: translateY(-10px);
     }
   `;
-  const PostTitle = styled.h2`
+  const AlbumTitle = styled.h2`
     font-size: 20px;
     color: #333;
     margin-bottom: 20px;
   `;
-  const PostBody = styled.div`
-    font-size: 15px;
-    color: #555;
-    line-height: 1.6;
-    margin-bottom: 10px;
-  `;
-  const PostUser = styled.div`
+  const AlbumUser = styled.div`
     font-size: 13px;
     text-align: right;
     color: #999;
   `;
   // jsx 자리
   return (
-    <PostCard>
-      <PostTitle>
+    <AlbumCard>
+      <AlbumTitle>
         {id}.{title}
-      </PostTitle>
-      <PostBody>{body}</PostBody>
-      <PostUser>User: {userid}</PostUser>
-    </PostCard>
+      </AlbumTitle>
+      <AlbumUser>User: {userid}</AlbumUser>
+    </AlbumCard>
   );
 }
 
-export default PostList;
+export default AlbumList;

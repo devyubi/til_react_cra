@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AlbumList from "../components/albums/AlbumsList";
+import AlbumList from "../components/albums/AlbumList";
 
 function Albums() {
   // js 자리
@@ -8,29 +8,17 @@ function Albums() {
     try {
       const res = await fetch("https://jsonplaceholder.typicode.com/albums");
       const result = await res.json();
-      console.log(result);
       setAlbumsData(result);
     } catch (error) {
       console.log(error);
     }
   }
-  function makeAlbumsList() {
-    let list = [];
-    list = makeAlbumsList.map(function (item, index) {
-      return <AlbumList key={index} />;
-    });
-    return list;
-  }
-  function resetList() {
-    setAlbumsData([]);
-  }
+  //   getAlbums();
   // jsx 자리
   return (
     <div>
       <h1>
-        Albums 목록
-        <button onClick={getAlbums}>목록가져오기</button>
-        <button onClick={resetList}>목록초기화</button>
+        Albums 목록 <button onClick={getAlbums}>목록가져오기</button>
       </h1>
       <div>
         {albumsData.map(function (요소, 인덱스) {

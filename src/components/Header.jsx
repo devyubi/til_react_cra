@@ -1,5 +1,5 @@
 import React from "react";
-import BgObjRed, { BgObj } from "./bg.js";
+import BgObjRed, { BgObj } from "./bg";
 
 function Header() {
   // js 코딩자리

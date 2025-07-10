@@ -52,11 +52,6 @@ function Slide() {
       </Button>
       <Button variant="success">경고</Button>
 
-      <Button variant="success" size="lg">
-        경고버튼 : large 경고버튼
-      </Button>
-      <Button variant="success">경고</Button>
-
       <h2>태그 예제</h2>
       <Tag variant="success" rounded={true} size="lg">
         성공
@@ -76,67 +71,65 @@ function Slide() {
         <Avatar
           src="https://i.pravatar.cc/100"
           alt="큰거"
-          size="80px"
-          shadow={false}
-        />
-        <Avatar
-          src="https://i.pravatar.cc/100"
-          alt="큰거"
           size="120px"
           shadow={false}
         />
         <Avatar
           src="https://i.pravatar.cc/100"
-          alt="큰거"
-          size="100px"
+          alt="중간"
+          size="60px"
           shadow={false}
         />
         <Avatar
           src="https://i.pravatar.cc/100"
-          alt="큰거"
-          size="40px"
+          alt="작은거"
+          size="12px"
           shadow={false}
         />
-        <div>
-          <Toast></Toast>
-          <Toast message="로그인 되었습니다." bg="#28A745"></Toast>
-        </div>
-        <div>
-          <Alert>기본</Alert>
-          <Alert type="success">성공</Alert>
-          <Alert type="error">오류</Alert>
-          <Alert type="warning">경고</Alert>
-          <Alert type="info">정보</Alert>
-        </div>
-        <div>
-          <Chip></Chip>
-          <Chip label="React"></Chip>
-          <Chip label="JavaScript"></Chip>
-          <Chip label="Styled"></Chip>
-        </div>
-        <div>
-          {/* <Modal>
-            <h3>Modal Title</h3>
-            <p>Modal content</p>
-          </Modal> */}
-        </div>
-
-        <div>
-          <ProgressBar />
-          <ProgressBar percent={30} color="#f00" />
-          <ProgressBar percent={50} color="#0f0" />
-          <ProgressBar percent={80} color="#00f" />
-          <ProgressBar percent={100} />
-        </div>
-        <div>
-          <Skeleton width="80%" height="20px" />
-          <Skeleton width="60%" height="10px" />
-          <Skeleton width="100%" height="400px" />
-        </div>
       </div>
       <div>
-        <Tooltip text="click here">
-          <button>회원가입</button>
+        <Toast></Toast>
+        <Toast message="로그인하셨습니다!" bg="#28a745" />
+      </div>
+
+      <div>
+        <Alert>기본입니다.</Alert>
+        <Alert type="success">성공입니다.</Alert>
+        <Alert type="error">에러입니다.</Alert>
+        <Alert type="warning">경고입니다.</Alert>
+        <Alert type="info">정보입니다.</Alert>
+      </div>
+
+      <div>
+        <Chip></Chip>
+        <Chip label="React"></Chip>
+        <Chip label="JavaScript"></Chip>
+        <Chip label="Styled"></Chip>
+      </div>
+
+      <div>
+        {/* <Modal>
+          <h3>모달타이틀</h3>
+          <p>모달내용</p>
+        </Modal> */}
+      </div>
+
+      <div>
+        <ProgressBar />
+        <ProgressBar percent={30} color="#f00" />
+        <ProgressBar percent={50} color="#0f0" />
+        <ProgressBar percent={80} color="#00f" />
+        <ProgressBar percent={100} />
+      </div>
+
+      <div>
+        <Skeleton width="80%" height="20px" />
+        <Skeleton width="60%" height="10px" />
+        <Skeleton width="100%" height="400px" />
+      </div>
+      <div>
+        <Tooltip text="클릭을 해주세요!">
+          <button>회원가입을 위한 버튼입니다.</button>
         </Tooltip>
       </div>
     </div>

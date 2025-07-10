@@ -13,7 +13,7 @@ function Avatar({
     width: ${props => props.size};
     height: ${props => props.size};
     object-fit: cover;
-    border: 1px solid rgba(0, 0, 0, 0.5);
+    border: 3px solid rgba(0, 0, 0, 0.5);
     box-shadow: 0px 2px 6px rgba(0, 0, 0, ${props => (props.shadow ? 0.3 : 0)});
   `;
 

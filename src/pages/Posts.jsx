@@ -5,6 +5,7 @@ function Posts() {
   // js 자리
   //   let postsArr = [];
   const [postsArr, setPostsArr] = useState([]);
+
   async function getPosts() {
     try {
       const res = await fetch("https://jsonplaceholder.typicode.com/posts");

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "@emotion/styled";
-
 function Button({
   children,
   variant = "default",
