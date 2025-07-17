@@ -19,6 +19,7 @@ function Todo({ todoList, handleDelete }) {
   console.log(search); //        ?age=1
   console.log(state); //         null 이 나옴
 
+  // jsx 자리
   return (
     <Container>
       <TodoButtonWrap>

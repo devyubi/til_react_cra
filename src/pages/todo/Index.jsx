@@ -1,3 +1,5 @@
+import 이름 from "../../assets/logo192.png";
+
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LoadingDiv from "../../components/ui/LoadingDiv";
@@ -102,6 +104,10 @@ function Index() {
   // jsx 자리
   return (
     <div className="wrap">
+      <img src="/logo192.png" alt="logo" />
+      <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="logo" />
+      <h2>/src/assets 폴더 이미지 활용</h2>
+      <img src={이름} alt="logo" />
       <Router>
         <Routes>
           <Route
