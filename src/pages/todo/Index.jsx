@@ -4,6 +4,10 @@ import Todo from "./Todo";
 import TodoAdd from "./TodoAdd";
 import TodoDetail from "./TodoDetail";
 import TodoEdit from "./TodoEdit";
+import Layout from "../company/Layout";
+import CompanyDetail from "../company/CompanyDetail";
+import CompanyList from "../company/CompanyList";
+import CompanyLocation from "../company/CompanyLocation";
 
 function Index() {
   // js 자리
@@ -73,6 +77,7 @@ function Index() {
   useEffect(() => {
     localStorage.setItem("mind-todo", JSON.stringify(todoList));
   }, [todoList]);
+
   // jsx 자리
   return (
     <div className="wrap">
@@ -106,6 +111,12 @@ function Index() {
               />
             }
           />
+          {/* 회사소개 */}
+          <Route path="/company" element={<Layout />}>
+            <Route index element={<CompanyDetail />} />
+            <Route path="list" element={<CompanyList />} />
+            <Route path="location" element={<CompanyLocation />} />
+          </Route>
         </Routes>
       </Router>
     </div>

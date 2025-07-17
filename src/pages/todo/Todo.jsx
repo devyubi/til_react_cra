@@ -10,9 +10,15 @@ import {
   TodoItem,
   TodoListMessage,
 } from "./Todo.style";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function Todo({ todoList, handleDelete }) {
+  // 현재 path 알아내기 (사용자몰래 정보 전달하기)
+  const { pathname, search, state } = useLocation();
+  console.log(pathname); //      /company/list
+  console.log(search); //        ?age=1
+  console.log(state); //         null 이 나옴
+
   return (
     <Container>
       <TodoButtonWrap>

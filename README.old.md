@@ -575,15 +575,137 @@ const [isLogin, setIsLogin] = useState(false);
 ```
 
 ```jsx
-      <Footer>
-        {" "}
-        {isLogin ? (
-          <p>🌹 로그인 중이시네요.</p>
-        ) : (
-          <p>😎 로그아웃 중이시군요.</p>
-        )}
-      </Footer>
-      
+<Footer>
+  {" "}
+  {isLogin ? <p>🌹 로그인 중이시네요.</p> : <p>😎 로그아웃 중이시군요.</p>}
+</Footer>
 ```
 
 ## 7.8 레이아웃을 유지하고 Outlet 에 출력하기
+
+- Route는 오로지 컴포넌트 이동 후 출력만 담당
+- Route는 레이아웃 역할을 하지 못함
+- Route를 레이아웃 용도로 활용하겠다는 것
+
+```jsx
+// Route 에 코드 구성
+          {/* 회사소개 */}
+          <Route path="/company" element={<Layout />}>
+            <Route index element={<CompanyDetail />} />
+            <Route path="list" element={<CompanyList />} />
+            <Route path="location" element={<CompanyLocation />} />
+          </Route>
+        </Routes>
+      </Router>
+    </div>
+  );
+}
+
+export default Index;
+```
+
+- layout
+
+```jsx
+import React from "react";
+import { Link, Outlet } from "react-router-dom";
+
+function Layout() {
+  return (
+    <div>
+      <div>로컬메뉴</div>
+      <div>
+        <div>
+          <Link to="/company">회사 소개</Link>
+          <br />
+          <Link to="/company/list">제품 소개</Link>
+          <br />
+          <Link to="/company/location">회사 위치 소개</Link>
+        </div>
+        <h2>Outlet 자리</h2>
+        <div style={{ background: "yellow", minHeight: 100 }}>
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Layout;
+```
+
+## 7.9 Link 말고 js 코드로 이동하기
+
+- Ctrl + 클릭으로 이동 하지 않고 js 코드로 라우터 이동
+
+```jsx
+import { useNavigate } from "react=router-dom";
+
+// js 자리
+const navigate = useNavigate();
+
+// 이동코드
+navigate("/라우터경로");
+
+// 이전화면
+navigate(-1);
+```
+
+## 7.10 Path 및 Params `실시간 생성` 하기
+
+- 문자열 또는 백틱 ( ` ` ) 으로 생성하는 것이 일반적
+
+```jsx
+const path = "/";
+const uri = `/${변수}`;
+```
+
+```jsx
+// 쿼리스트링 예제
+const path = `/service?age=${변수}&name=${변수}`;
+// params 예제
+const path = `/todo/${변수}`;
+```
+
+- SearchParams 를 만들어주는 문법
+
+```jsx
+const path = `/service?age=${변수}&name=${변수}`;
+```
+
+````jsx
+const user = {
+      name: "iu",
+      age: 28,
+      id: 100,
+    };
+    const queryStr = createSearchParams({ ...user }).toString();
+    console.log(queryStr); // name=iu&age=28&id=100
+    ```
+````
+
+- 현재 path 알아내기
+
+```jsx
+import { useLocation } from "react-router-dom";
+
+// jsx 자리
+const { pathname, search, state } = useLocation();
+console.log(pathname); //      /company/list
+console.log(search); //        ?age=1
+console.log(state); //         null 이 나옴
+```
+
+## 7.11 사용자 모르게 데이터를 라우터로 전달하기
+
+- `params` 나 `쿼리스트링` 은 사용자에게 보여짐
+
+```jsx
+const path = "/";
+const 숨긴정보 = {
+  memo: "회사소개에서 왔어요",
+  good: "제품도 봤어요",
+  favorite: "이사람 제품1에 관심있네요?",
+};
+navigate({ pathname: path, search: "?hi=100" }, { state: { 숨긴정보 } });
+```
