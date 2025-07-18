@@ -1,73 +1,158 @@
-# 리소스 최적화
+# useRef
 
-- public 폴더에 있는 파일들은 원본 그대로 노출 됨
-- src 폴더 안에 있는 파일들은 용량이 최적화 되어 압축됨
+- html 태그를 보관해두기 (document.querySelector 처럼)
+- 화면에 보여주지 않는 변수를 보관할 수 있음
+- Rerendering 해도 값을 초기화 하지 않습니다.
 
-## 1. 이미지
+## DOM 요소 참조하기
 
-### 1.1 퍼블릭 폴더 안에 있는 이미지 접근법
-
-- http://localhost:3000/logo192.png
-- `/logo192.png` 로 접근
-- public/image 에 파일이 있다면 `/image/파일명.확장자`
-- 환경설정파일 참조방식도 가능함.
+- 포커스하기
 
 ```jsx
-<img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="logo" />
+import React, { useRef } from "react";
+import { Button } from "./pages/todo/Todo.style";
+
+function App() {
+  // 태그를 참조해서 보관하고 싶다.
+  const inputRef = useRef(null);
+  const handleClick = () => {
+    inputRef.current.focus(); // inputRef 를 사용하고 싶을때 무조건 current 를 사용. 그 외는 없음
+  };
+
+  return (
+    <div>
+      <h1>포커스로 이동하기</h1>
+      <input ref={inputRef} type="text" placeholder="아이디를 입력하세요" />
+      <Button onClick={handleClick}>입력창 이동</Button>
+    </div>
+  );
+}
+
+export default App;
 ```
 
-### 1.2 /src 폴더에 있는 이미지 접근법
-
-- http://localhost:3000/logo192.png
-- `/logo192.png` 로 접근
-
-- public/images 파일이 있다면 `/images/파일명.확장자`
-- 환경설정파일 참조방식 가능함.
+- 스크롤 부드럽게 넘기기
 
 ```jsx
-<img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="로고" />
+import React, { useRef } from "react";
+
+function App() {
+  // DOM 보관해 두는 React 변수
+  const companyRef = useRef(null);
+  const topRef = useRef(null);
+  const handleClickCompany = () => {
+    companyRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+  const handleClickTop = () => {
+    topRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <div ref={topRef}>
+      <h1>스크롤해보기</h1>
+      <button onClick={handleClickCompany}>회사소개로 이동하기</button>
+      <div style={{ height: "100vh", background: "hotpink" }}>인사말</div>
+      <div
+        ref={companyRef}
+        style={{ height: "100vh", background: "greenyellow" }}
+      >
+        회사소개
+      </div>
+      <button
+        onClick={handleClickTop}
+        style={{ position: "fixed", right: 30, bottom: 30, zIndex: 999 }}
+      >
+        위로가기
+      </button>
+    </div>
+  );
+}
+
+export default App;
 ```
+
+- form 태그의 input 요소 초기화 하기
 
 ```jsx
-import 이름 from "../../assets/logo192.png";
+import React, { useRef } from "react";
+
+function App() {
+  const inputRef = useRef(null);
+  const handleClick = () => {
+    inputRef.current.value = "";
+  };
+  return (
+    <div>
+      <input ref={inputRef} type="text" />
+      <button onClick={handleClick}>값 비우기</button>
+    </div>
+  );
+}
+
+export default App;
 ```
 
-## 2. font 파일
+- 비디오 제어하기
 
-- font 는 가능하면 웹폰트를 쓰는 것을 추천함
-- 구글폰트 : https://fonts.google.com
-- 눈누 : https://noonnu.cc/font_page/pick
-- 만약 파일이 존재한다면 /public 폴더에 두고 활용하자
+```jsx
+import React, { useRef } from "react";
 
-## 2.1. 예제 (css 가 public에 있을 때)
-
-- https://www.lotteriafont.com
-- /public/fonts 폴더에 파일이 있다는 가정으로 진행
-- /public/index.css 에 `font-face` 추가
-
-```css
-@font-face {
-  font-family: "ddag";
-  src: url("/fonts/ddag.ttf");
+function App() {
+  const videoRef = useRef(null);
+  const prevV = () => {
+    videoRef.current.currentTime -= 10;
+    videoRef.current.play();
+  };
+  const playV = () => {
+    videoRef.current.currentTime = 0;
+    videoRef.current.play();
+  };
+  const stopV = () => {
+    videoRef.current.currentTime = 0;
+    videoRef.current.pause();
+  };
+  const nextV = () => {
+    videoRef.current.currentTime += 10;
+    videoRef.current.play();
+  };
+  return (
+    <div>
+      <h1>video 제어</h1>
+      <video ref={videoRef} src="비디오주소url" muted autoPlay controls></video>
+      <div>
+        <button onClick={prevV}>10초전</button>
+        <button onClick={playV}>play</button>
+        <button onClick={stopV}>stop</button>
+        <button onClick={nextV}>10초후</button>
+      </div>
+    </div>
+  );
 }
-@font-face {
-  font-family: "chab";
-  src: url("/fonts/chab.ttf");
-}
+
+export default App;
 ```
 
-## 2.2 예제 (css 가 /src 에 있을 때)
+## 변수 활용하기
 
-- 압축이 된다
+- useRef 화면은 바꾸지 않고, 값만 조용히 저장하고 싶을 때 사용
+- 값을 보관하고 Rerendering 이 되어도 유지하기
 
-```css
-/* 글꼴 설정 */
-@font-face {
-  font-family: "ddag";
-  src: url("./assets/ddag.ttf");
+```jsx
+import React, { useRef } from "react";
+
+function App() {
+  const countRef = useRef(0);
+  const incre = () => {
+    countRef.current++;
+    console.log(countRef.current);
+  };
+  return (
+    <div>
+      <h1>값 보관 및 저장 {countRef.current}</h1>
+      <button onClick={incre}>증가</button>
+    </div>
+  );
 }
-@font-face {
-  font-family: "chap";
-  src: url("./assets/chab.ttf");
-}
+
+export default App;
 ```

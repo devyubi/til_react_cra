@@ -9,6 +9,6 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <div className="wrap">
-    <Index />
+    <App />
   </div>,
 );
