@@ -150,6 +150,7 @@ export default App;
 ```
 
 # useCallback
+
 - 왜 함수를 랜더링마다 새로 만들까?
 
 - 성능 이슈가 발생함
@@ -159,7 +160,7 @@ export default App;
     - 원하는 것 : ``const add = () { ... }` 한번 만들고 다시는 새로 만들지 마라.
 
 ```jsx
-    import React, { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "./pages/todo/Todo.style";
 
 function App() {
@@ -208,4 +209,28 @@ function App() {
 }
 
 export default App;
+```
+
+# React.memo
+
+- 불필요한 리랜더링을 막아줌
+- props 가 전달되면 리랜더링이 일어남
+- 이를 최적화 하기 위함.
+
+## 1. 문제점
+
+- 리액트 변수. 즉, `useState 에 의해서 값이 변해서 리랜더링 된 것은 정상`임
+- 그러나 리랜더링에서 제외되어야 하는 컴포넌트를 설정할 필요성이 있음.
+
+```jsx
+import React, { memo } from "react";
+
+function Child() {
+  // js 자리
+  console.log("Child:리랜더링");
+  // jsx 자리
+  return <div>Child</div>;
+}
+
+export default memo(Child);
 ```
