@@ -251,3 +251,5 @@ export default App;
     "source.fixAll.eslint": "explicit"
 },}
 ```
+
+이후 09번 확인 후 세팅 추가
