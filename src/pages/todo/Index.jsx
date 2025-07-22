@@ -1,6 +1,6 @@
 import 이름 from "../../assets/logo192.png";
 
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LoadingDiv from "../../components/ui/LoadingDiv";
 
