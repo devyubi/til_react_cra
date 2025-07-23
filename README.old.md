@@ -805,4 +805,434 @@ export default App;
 
 # useReducer
 
+- useState 는 간단한 state 를 관리, 업데이트
+- useReducer 는 복잡한 state 를 복잡하게 관리, 업데이트
+- useReducer 는 state (상태) 와 `state 업데이트를 분리`하여 관리
+
+## 1. useState를 useReducer 로 변경해보기
+
+```jsx
+import { useState } from "react";
+
+function App() {
+  const [count, setCount] = useState(0);
+  const minus = () => {
+    setCount(count - 1);
+  };
+  const add = () => {
+    setCount(count + 1);
+  };
+  return (
+    <div>
+      <p>현재숫자: {count}</p>
+      <button onClick={minus}>감소</button>
+      <button onClick={add}>증가</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- useReducer 로 변경
+
+```jsx
+import { useReducer, useState } from "react";
+
+// state 를 관리하는 기능을 분리해서 공급한다.
+// state  매개변수 : 현재의 상태
+// action 매개변수 : 어떤 액션, 즉 상황인지 정보를 가짐.
+// reducer 함수는 state 가 변하면 state 를 처리하는 함수
+function reducer(state, action) {
+  // action 은 객체로서 action.type 과 action.payload 가 있음
+  console.log(action);
+  switch (action.type) {
+    case "add":
+      return { count: state.count + 1 };
+    case "minus":
+      return { count: state.count - 1 };
+  }
+}
+
+function App() {
+  // useRedcuer(리듀서함수명, 초기값)
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  return (
+    <div>
+      <p>현재숫자: {state.count}</p>
+      <button onClick={() => dispatch({ type: "minus" })}>감소</button>
+      <button onClick={() => dispatch({ type: "add" })}>증가</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+## 2. 다양한 예제
+
+- 예제 1
+
+```jsx
+import { useReducer } from "react";
+
+// 1. Reduce 함수 만들기
+function reducer(state, action) {
+  // {type: "이름바꾸기", payload: "문유비"}
+  switch (action.type) {
+    case "이름바꾸기":
+      return { ...state, name: action.payload };
+    case "나이바꾸기":
+      return { ...state, age: action.payload };
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, { name: "", age: 29 });
+  return (
+    <div>
+      <p>
+        이름: {state.name}/ 나이: {state.age}
+      </p>
+      <input
+        type="text"
+        value={state.name}
+        placeholder="이름을 입력하세요."
+        onChange={e =>
+          dispatch({ type: "이름바꾸기", payload: e.target.value })
+        }
+      />
+      <input
+        type="text"
+        value={state.age}
+        placeholder="나이를 입력하세요."
+        onChange={e =>
+          dispatch({ type: "나이바꾸기", payload: e.target.value })
+        }
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+```jsx
+import { useReducer, useState } from "react";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "add":
+      return [...state, { key: new Date(), text: action.payload }];
+    case "delete":
+      return state.filter(item => item.key !== action.payload);
+    case "clear":
+      return [];
+    case "desc": // 내림차순 (최근 것이 먼저 출력)
+      return [...state].sort((a, b) => b.key - a.key); // sort : 정렬
+    case "asc": // 올림차순 (오래된 것이 먼저 출력)
+      return [...state].sort((a, b) => a.key - b.key);
+  }
+}
+function App() {
+  const [todos, dispatch] = useReducer(reducer, []);
+  const [txt, setTxt] = useState("");
+  return (
+    <div>
+      <h1>
+        간단한 Todo List{" "}
+        <button onClick={() => dispatch({ type: "clear" })}>전체 삭제</button>
+        <button onClick={() => dispatch({ type: "desc" })}>최신 글 정렬</button>
+        <button onClick={() => dispatch({ type: "asc" })}>
+          오래 된 글 정렬
+        </button>
+      </h1>
+      <div>
+        <input
+          type="text"
+          value={txt}
+          onChange={e => setTxt(e.target.value)}
+          placeholder="할일을 입력해주세요."
+        />
+        <button
+          onClick={() => {
+            dispatch({ type: "add", payload: txt });
+            setTxt("");
+          }}
+        >
+          할일 추가
+        </button>
+      </div>
+      <div>
+        {todos.map(item => (
+          <div key={item.key}>
+            {item.key.toString()} : {item.text}
+            <button
+              onClick={() => dispatch({ type: "delete", payload: item.key })}
+            >
+              삭제
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- 최신 글 자동 정렬
+
+```jsx
+import { useReducer, useState } from "react";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "add": {
+      const newItem = { key: Date.now(), text: action.payload };
+      return [...state, newItem].sort((a, b) => b.key - a.key);
+    }
+    case "delete":
+      return state.filter(item => item.key !== action.payload);
+    case "clear":
+      return [];
+    case "desc":
+      return [...state].sort((a, b) => b.key - a.key);
+    case "asc":
+      return [...state].sort((a, b) => a.key - b.key);
+    default:
+      return state;
+  }
+}
+function App() {
+  const [todos, dispatch] = useReducer(reducer, []);
+  const [txt, setTxt] = useState("");
+  return (
+    <div>
+      <h1>
+        간단한 Todo List{" "}
+        <button onClick={() => dispatch({ type: "clear" })}>전체 삭제</button>
+        <button onClick={() => dispatch({ type: "desc" })}>최신 글 정렬</button>
+        <button onClick={() => dispatch({ type: "asc" })}>
+          오래 된 글 정렬
+        </button>
+      </h1>
+      <div>
+        <input
+          type="text"
+          value={txt}
+          onChange={e => setTxt(e.target.value)}
+          placeholder="할일을 입력해주세요."
+        />
+        <button
+          onClick={() => {
+            dispatch({ type: "add", payload: txt });
+            setTxt("");
+          }}
+        >
+          할일 추가
+        </button>
+      </div>
+      <div>
+        {todos.map(item => (
+          <div key={item.key}>
+            {item.key.toString()} : {item.text}
+            <button
+              onClick={() => dispatch({ type: "delete", payload: item.key })}
+            >
+              삭제
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- 상단 코드 수정해야함.
+  이상한 글 나옴
+
+## 3. 프로젝트 규모에 따른 Reducer 구조
+
+- 소규모, 중규모, 대형프로젝트
+
+## 3.1. 초기 코드
+
+```jsx
+import { useReducer } from "react";
+
+// 1. 초기 상태
+const initialState = { count: 0 };
+// 2. 리듀서 함수
+function reducer(state, action) {
+  switch (action.type) {
+    case "add":
+      return { count: state.count + 1 };
+    case "minus":
+      return { count: state.count - 1 };
+    case "reset":
+      return { count: 0 };
+    default:
+      return state;
+  }
+}
+// 3. 리듀서 활용 컴포넌트
+function Count() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <div>
+      <h2>카운터 컴포넌트</h2>
+      <p>현재 카운트 : {state.count}</p>
+      <button onClick={() => dispatch({ type: "add" })}>더하기</button>
+      <button onClick={() => dispatch({ type: "minus" })}>빼기</button>
+      <button onClick={() => dispatch({ type: "reset" })}>초기화</button>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h1>useReducer 예제</h1>
+      <Count />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## 3.2. 소규모 프로젝트라면?
+
+- /src/components/counter 폴더 생성
+- CounterReducer.js 생성
+
+```jsx
+// 1. 초기 상태
+export const initialState = { count: 0 };
+// 2. 리듀서 함수
+export function reducer(state, action) {
+  switch (action.type) {
+    case "add":
+      return { count: state.count + 1 };
+    case "minus":
+      return { count: state.count - 1 };
+    case "reset":
+      return { count: 0 };
+    default:
+      return state;
+  }
+}
+```
+
+- Counter.jsx 생성
+
+```jsx
+import { useReducer } from "react";
+import { initialState, reducer } from "./CounterReducer";
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <div>
+      <h2>카운터 컴포넌트</h2>
+      <p>현재 카운트 : {state.count}</p>
+      <button onClick={() => dispatch({ type: "add" })}>더하기</button>
+      <button onClick={() => dispatch({ type: "minus" })}>빼기</button>
+      <button onClick={() => dispatch({ type: "reset" })}>초기화</button>
+    </div>
+  );
+}
+
+export default Counter;
+```
+
+## 3.3. 중규모 프로젝트라면?
+
+- /src/components/counter_mid 폴더 생성
+- CounterMid.jsx
+
+- /src/store/reducers 폴더 생성
+- counterMidReducer.js
+
+- /src/store/initialstates 폴더 생성
+- counterMidInitState.js
+
+## 3.4. 대규모 프로젝트(모듈기반)라면?
+
+- /src/modules 폴더 생성
+- /src/modules/counter 폴더 생성
+- countInitialState.js 파일 생성
+
+```js
+// 1. 초기 상태
+export const initialState = { count: 0 };
+```
+
+- countTypes.js 파일 생성
+
+```js
+export const ADD = "add";
+export const MINUS = "minus";
+export const RESET = "reset";
+```
+
+- countReducer.js 파일 생성
+
+```js
+import { ADD, MINUS, RESET } from "./countTypes";
+
+// 2. 리듀서 함수
+export function countReducer(state, action) {
+  switch (action.type) {
+    case ADD:
+      return { count: state.count + 1 };
+    case MINUS:
+      return { count: state.count - 1 };
+    case RESET:
+      return { count: 0 };
+    default:
+      return state;
+  }
+}
+```
+
+- countActions.js 파일 생성
+
+```js
+import { ADD, MINUS, RESET } from "./countTypes";
+
+export const add = () => ({ type: ADD });
+export const minus = () => ({ type: MINUS });
+export const reset = () => ({ type: RESET });
+```
+
+- /src/components/Counter.jsx 파일 생성
+
+```jsx
+import { useReducer } from "react";
+import { countReducer } from "../modules/counter/countReducer";
+import { initialState } from "../modules/counter/countInitialState";
+import { add, minus, reset } from "../modules/counter/countActions";
+
+function Counter() {
+  const [state, dispatch] = useReducer(countReducer, initialState);
+  return (
+    <div>
+      <h2>카운터 컴포넌트</h2>
+      <p>현재 카운트 : {state.count}</p>
+      <button onClick={() => dispatch(add())}>더하기</button>
+      <button onClick={() => dispatch(minus())}>빼기</button>
+      <button onClick={() => dispatch(reset())}>초기화</button>
+    </div>
+  );
+}
+
+export default Counter;
+```
+
 # useReducer + Context
