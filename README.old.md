@@ -917,6 +917,8 @@ function App() {
 export default App;
 ```
 
+- 글 정렬
+
 ```jsx
 import { useReducer, useState } from "react";
 
@@ -1236,3 +1238,877 @@ export default Counter;
 ```
 
 # useReducer + Context
+
+## 1. 앱의 배경색 변경하기
+
+- useState 버전
+
+```jsx
+import { useState } from "react";
+
+function App() {
+  const [color, setColor] = useState("white");
+  return (
+    <div style={{ backgroundColor: color, height: "100vh" }}>
+      <h1>배경 색상 변경</h1>
+      <button onClick={() => setColor("#FCF3FB")}>분홍색</button>
+      <button onClick={() => setColor("#C2C1EE")}>보라색</button>
+      <button onClick={() => setColor("white")}>초기화</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- useReducer 버전 마이그레이션 (코드 업데이트)
+
+```jsx
+import { useState } from "react";
+// 1. 초기값 설정
+const initialState = "white";
+// 2. Reducer 함수 만들기
+function reducer(state, action) {
+  switch (action.type) {
+    case "#FCF3FB":
+      return "#FCF3FB";
+    case "#C2C1EE":
+      return "#C2C1EE";
+    case "RESET":
+      return initialState;
+    default:
+      return state;
+  }
+}
+
+function App() {
+  // const [color, setColor] = useState("white");
+  const [state, dispatch] = useState("white");
+  return (
+    <div style={{ backgroundColor: color, height: "100vh" }}>
+      <h1>배경 색상 변경</h1>
+      <button onClick={() => dispatch({ type: "#FCF3FB" })}>분홍색</button>
+      <button onClick={() => dispatch({ type: "#C2C1EE" })}>보라색</button>
+      <button onClick={() => dispatch({ type: "white" })}>초기화</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- Context API 도입 (React 전역변수 - 전역상태)
+- /src/contexts 폴더 생성
+- ColorContext.jsx 파일 생성
+- 단계 1.
+
+```jsx
+import { createContext } from "react";
+
+const ColorContext = createContext();
+const ColorContextProvider = ({ children }) => {
+  return (
+    <ColorContext.Provider value={"white"}>{children}</ColorContext.Provider>
+  );
+};
+```
+
+- 단계 2. export
+
+```jsx
+import { createContext } from "react";
+
+export const ColorContext = createContext();
+export const ColorContextProvider = ({ children }) => {
+  return (
+    <ColorContext.Provider value={"white"}>{children}</ColorContext.Provider>
+  );
+};
+```
+
+- 단계3
+
+```jsx
+import { createContext, useReducer } from "react";
+
+// 1. 초기값 설정
+const initialState = "white";
+
+// 2. Reducer 함수 만들기
+function reducer(state, action) {
+  switch (action.type) {
+    case "#FCF3FB":
+      return "#FCF3FB";
+    case "#C2C1EE":
+      return "#C2C1EE";
+    case "RESET":
+      return initialState;
+    default:
+      return state;
+  }
+}
+export const ColorContext = createContext();
+export const ColorContextProvider = ({ children }) => {
+  // 3번 state 생성
+  const [color, dispatch] = useReducer(reducer, initialState);
+  return (
+    <ColorContext.Provider value={{ color, dispatch }}>
+      {children}
+    </ColorContext.Provider>
+  );
+};
+```
+
+- 4단계 (활용하기)
+
+```jsx
+import { useContext } from "react";
+import { ColorContext, ColorContextProvider } from "./contexts/ColorContext";
+
+function ColorComponent() {
+  const { color, dispatch } = useContext(ColorContext);
+  return (
+    <div style={{ backgroundColor: color, height: "100vh" }}>
+      <h1>배경 색상 변경</h1>
+      <button onClick={() => dispatch({ type: "#FCF3FB" })}>분홍색</button>
+      <button onClick={() => dispatch({ type: "#C2C1EE" })}>보라색</button>
+      <button onClick={() => dispatch({ type: "white" })}>초기화</button>
+    </div>
+  );
+}
+function App() {
+  return (
+    <ColorContextProvider>
+      <ColorComponent />
+    </ColorContextProvider>
+  );
+}
+
+export default App;
+```
+
+## 2. 테마 적용하기 및 로컬 스토리지에 저장해서 관리하기
+
+- useState 로 진행해보기
+
+```css
+/* index.css */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline-style: none;
+}
+a {
+  text-decoration: none;
+  color: #000;
+}
+ul,
+ol {
+  list-style: none;
+}
+html {
+}
+body {
+  font-family: "ddag";
+}
+
+.app-container {
+  flex-direction: column;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+.dark {
+  background-color: #1e1b27;
+  color: #c2c1ee;
+}
+.light {
+  background-color: #fcf3fb;
+  color: #c2c1ee;
+}
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+```
+
+- App.jsx
+
+```jsx
+import { useState } from "react";
+import "./index.css";
+function App() {
+  const [theme, setTheme] = useState("light");
+  return (
+    <div className={`app-container dark ${theme}`}>
+      <h1>{theme === "light" ? "라이트모드" : "다크모드"}</h1>
+      <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+        모드전환
+      </button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- useReducer 버전
+
+```jsx
+import { useReducer } from "react";
+import "./index.css";
+
+// 1. 초기값 세팅
+const initialState = "light";
+// 2. Reducer 함수 세팅
+function reducer(state, action) {
+  switch (action.type) {
+    case "TOGGLE":
+      return state === "light" ? "dark" : "light";
+    default:
+      return state;
+  }
+}
+
+function App() {
+  // const [theme, setTheme] = useState("light");
+  // 3. 위 코드 안씀
+  const [theme, dispatch] = useReducer(reducer, initialState);
+  return (
+    <div className={`app-container dark ${theme}`}>
+      <h1>{theme === "light" ? "라이트모드" : "다크모드"}</h1>
+      <button onClick={() => dispatch({ type: "TOGGLE" })}>모드전환</button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- Context API 마이그레이션
+- /src/contexts 폴더
+- ThemeContext.jsx 파일 생성
+
+- 단계 1
+
+```jsx
+import { createContext } from "react";
+
+const ThemeContext = createContext();
+const ThemeContextProvider = ({ children }) => {
+  return <ThemeContext.Provider value={0}>{children}</ThemeContext.Provider>;
+};
+```
+
+- 단계 2. useReducer 적용
+
+```jsx
+import { createContext, useReducer } from "react";
+
+// 1. 초기값 세팅
+const initialState = "light";
+// 2. Reducer 함수 세팅
+function reducer(state, action) {
+  switch (action.type) {
+    case "TOGGLE":
+      return state === "light" ? "dark" : "light";
+    default:
+      return state;
+  }
+}
+
+export const ThemeContext = createContext();
+export const ThemeContextProvider = ({ children }) => {
+  // 3. 위 코드 안씀
+  const [theme, dispatch] = useReducer(reducer, initialState);
+  return (
+    <ThemeContext.Provider value={{ theme, dispatch }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+- 3단계 Context 활용
+
+```jsx
+import { useContext } from "react";
+import { ThemeContext, ThemeContextProvider } from "./contexts/ThemeContext";
+import "./index.css";
+
+function Main() {
+  const { theme, dispatch } = useContext(ThemeContext);
+  return (
+    <div className={`app-container ${theme}`}>
+      <h1>{theme === "light" ? "라이트모드" : "다크모드"}</h1>
+      <button onClick={() => dispatch({ type: "TOGGLE" })}>모드전환</button>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeContextProvider>
+      <Main />
+    </ThemeContextProvider>
+  );
+}
+
+export default App;
+```
+
+- 로컬스토리지 적용 해보기
+- 전역으로 보관하고 있는 `Theme 를 저장`해야함
+- /src/contexts/ThemeContext.jsx 대상
+
+```jsx
+import { createContext, useEffect, useReducer } from "react";
+
+// 1. 초기값 세팅
+const initialState = "light";
+// 2. Reducer 함수 세팅
+function reducer(state, action) {
+  switch (action.type) {
+    case "TOGGLE":
+      const nowTheme = state === "light" ? "dark" : "light";
+      // 글자보관
+      localStorage.setItem("theme", nowTheme);
+      return nowTheme;
+    case "INIT":
+      return action.payload || "light";
+    default:
+      return state;
+  }
+}
+
+export const ThemeContext = createContext();
+export const ThemeContextProvider = ({ children }) => {
+  // js 자리
+
+  // 3. 위 코드 안씀
+  const [theme, dispatch] = useReducer(reducer, initialState);
+
+  // 최초로 local Storage 에서 값 불러들임
+  useEffect(() => {
+    const result = localStorage.getItem("theme");
+    dispatch({ type: "INIT", payload: result });
+  }, []);
+  // jsx 자리
+  return (
+    <ThemeContext.Provider value={{ theme, dispatch }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+## 3. 감정 이모지 선택기 만들기
+
+- useState 버전
+
+```jsx
+import { useState } from "react";
+
+function App() {
+  const [emotion, setEmotion] = useState("");
+
+  const emotions = ["😊", "😢", "😡", "😱", "😴", "😍", "😤", "🤢", "🤔", "😭"];
+
+  return (
+    <div style={{ padding: "30px", textAlign: "center" }}>
+      <h1>오늘 내 기분은?</h1>
+
+      {/* 선택된 감정 표시 */}
+      <h2 style={{ fontSize: "50px" }}>{emotion || "❓"}</h2>
+
+      {/* 이모지 버튼 목록 */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "10px",
+          maxWidth: "290px", // ✅ 핵심 수정
+          margin: "0 auto",
+        }}
+      >
+        {emotions.map(emo => (
+          <button
+            key={emo}
+            onClick={() => setEmotion(emo)}
+            style={{
+              fontSize: "30px",
+              cursor: "pointer",
+              background: emotion === emo ? "#d1e7ff" : "white",
+              border: "2px solid #ccc",
+              borderRadius: "8px",
+              width: "50px",
+              height: "50px",
+              padding: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {emo}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+```jsx
+import { useReducer } from "react";
+
+// 1. 초기값
+const initialState = "😊";
+
+// 2. 리듀서 함수
+function reducer(state, action) {
+  switch (action.type) {
+    case "😊":
+    case "😢":
+    case "😡":
+    case "😱":
+    case "😴":
+    case "😍":
+    case "😤":
+    case "🤢":
+    case "🤔":
+    case "😭":
+      return action.type;
+    default:
+      return state;
+  }
+}
+
+function App() {
+  // 3. useReducer 선언
+  const [emotion, dispatch] = useReducer(reducer, initialState);
+
+  // 이모지 배열
+  const emotions = ["😊", "😢", "😡", "😱", "😴", "😍", "😤", "🤢", "🤔", "😭"];
+
+  return (
+    <div style={{ padding: "30px", textAlign: "center" }}>
+      <h1>오늘 내 기분은?</h1>
+
+      {/* 선택된 감정 표시 */}
+      <h2 style={{ fontSize: "50px" }}>{emotion || "❓"}</h2>
+
+      {/* 이모지 버튼 목록 */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
+          maxWidth: "290px",
+          margin: "0 auto",
+          transition: "0.3s",
+        }}
+      >
+        {emotions.map(emo => (
+          <button
+            key={emo}
+            onClick={() => dispatch({ type: emo })}
+            style={{
+              fontSize: "30px",
+              cursor: "pointer",
+              background: emotion === emo ? "#d1e7ff" : "white",
+              border: "2px solid #ccc",
+              borderRadius: "8px",
+              width: "50px",
+              height: "50px",
+              padding: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {emo}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- Context API 마이그레이션
+- /src/contexts 폴더
+- EmotionContext.jsx 생성
+
+- 1 단계 (컨텍스트와 프로바이더 생성)
+
+```jsx
+import { createContext } from "react";
+
+const EmotionContext = createContext();
+const EmotionContextProvider = ({ children }) => {
+  return (
+    <EmotionContext.Provider value={0}>{children}</EmotionContext.Provider>
+  );
+};
+```
+
+- 2 단계 (Export)
+
+```jsx
+import { createContext } from "react";
+
+// 1. 초기값
+const initialState = "😊";
+// 2. 리듀서 함수
+function reducer(state, action) {
+  switch (action.type) {
+    case "😊":
+    case "😢":
+    case "😡":
+    case "😱":
+    case "😴":
+    case "😍":
+    case "😤":
+    case "🤢":
+    case "🤔":
+    case "😭":
+      return action.type;
+    default:
+      return state;
+  }
+}
+
+export const EmotionContext = createContext();
+export const EmotionContextProvider = ({ children }) => {
+  return (
+    <EmotionContext.Provider value={{ emotion, dispatch }}>
+      {children}
+    </EmotionContext.Provider>
+  );
+};
+```
+
+- 3 단계 (useReducer 이동)
+
+```jsx
+import { createContext, useReducer } from "react";
+
+// 1. 초기값
+const initialState = "😊";
+
+// 2. 리듀서 함수
+function reducer(state, action) {
+  switch (action.type) {
+    case "😊":
+    case "😢":
+    case "😡":
+    case "😱":
+    case "😴":
+    case "😍":
+    case "😤":
+    case "🤢":
+    case "🤔":
+    case "😭":
+      return action.type;
+    default:
+      return state;
+  }
+}
+
+// 3. Context 생성
+export const EmotionContext = createContext();
+
+// 4. Context Provider 컴포넌트
+export const EmotionContextProvider = ({ children }) => {
+  const [emotion, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <EmotionContext.Provider value={{ emotion, dispatch }}>
+      {children}
+    </EmotionContext.Provider>
+  );
+};
+```
+
+- 4 단계 (활용)
+
+```jsx
+// app.jsx
+import { useContext } from "react";
+import { EmotionContext } from "./contexts/EmotionContext";
+
+function App() {
+  const { emotion, dispatch } = useContext(EmotionContext);
+
+  const emotions = ["😊", "😢", "😡", "😱", "😴", "😍", "😤", "🤢", "🤔", "😭"];
+
+  return (
+    <div style={{ padding: "30px", textAlign: "center" }}>
+      <h1>오늘 내 기분은?</h1>
+
+      <h2 style={{ fontSize: "50px" }}>{emotion || "❓"}</h2>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
+          maxWidth: "290px",
+          margin: "0 auto",
+          transition: "0.3s",
+        }}
+      >
+        {emotions.map(emo => (
+          <button
+            key={emo}
+            onClick={() => dispatch({ type: emo })}
+            style={{
+              fontSize: "30px",
+              cursor: "pointer",
+              background: emotion === emo ? "#d1e7ff" : "white",
+              border: "2px solid #ccc",
+              borderRadius: "8px",
+              width: "50px",
+              height: "50px",
+              padding: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {emo}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+- 로컬 스토리지 적용
+
+```jsx
+import { createContext, useEffect, useReducer } from "react";
+
+// 1. 초기값
+const initialState = "😊";
+
+// 2. 리듀서 함수
+function reducer(state, action) {
+  switch (action.type) {
+    case "INIT":
+      return action.payload;
+    case "😊":
+    case "😢":
+    case "😡":
+    case "😱":
+    case "😴":
+    case "😍":
+    case "😤":
+    case "🤢":
+    case "🤔":
+    case "😭":
+      localStorage.setItem("emotion", action.type);
+      return action.type;
+    default:
+      return state;
+  }
+}
+
+// 3. Context 생성
+export const EmotionContext = createContext();
+
+// 4. Context Provider 컴포넌트
+export const EmotionContextProvider = ({ children }) => {
+  // js 자리
+  const [emotion, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    const result = localStorage.setItem("emotion", emotion);
+    if (result) {
+      dispatch({ type: "INIT", payload: result });
+    }
+  }, [emotion, isSelected]);
+  // jsx 자리
+  return (
+    <EmotionContext.Provider value={{ emotion, dispatch }}>
+      {children}
+    </EmotionContext.Provider>
+  );
+};
+```
+
+- 하루에 한번만 이모지 등록하게 하기
+- App.jsx
+
+```jsx
+import { useContext } from "react";
+import {
+  EmotionContext,
+  EmotionContextProvider,
+} from "./contexts/EmotionContext";
+
+function Emotion() {
+  const { emotion, dispatch, isSelected, setIsSelected } =
+    useContext(EmotionContext);
+  const bgColors = {
+    happy: "yellow",
+    sad: "blue",
+    angry: "red",
+  };
+  const message = {
+    happy: "지금 나는 😊 행복해요!",
+    sad: "지금 나는 😢 슬퍼요...",
+    angry: "지금 나는 🤬 화났어요!",
+  };
+  return (
+    <div
+      style={{
+        backgroundColor: bgColors[emotion],
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        transition: "0.3s",
+      }}
+    >
+      <h1>오늘의 기분 등록하기</h1>
+      <h2>{message[emotion]}</h2>
+      <div>
+        <button
+          disabled={isSelected}
+          onClick={() => {
+            dispatch({ type: "HAPPY" });
+            setIsSelected(true);
+          }}
+        >
+          😊
+        </button>
+        <button
+          disabled={isSelected}
+          onClick={() => {
+            dispatch({ type: "SAD" });
+            setIsSelected(true);
+          }}
+        >
+          😢
+        </button>
+        <button
+          disabled={isSelected}
+          onClick={() => {
+            dispatch({ type: "ANGRY" });
+            setIsSelected(true);
+          }}
+        >
+          🤬
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <EmotionContextProvider>
+      <Emotion />
+    </EmotionContextProvider>
+  );
+}
+
+export default App;
+```
+
+- EmotionContext.jsx
+
+```jsx
+import { createContext, useEffect, useReducer, useState } from "react";
+// 1. 초기값
+const initialState = "happy";
+// 2. 리듀서함수
+function reducer(state, action) {
+  switch (action.type) {
+    case "HAPPY":
+      return "happy";
+    case "SAD":
+      return "sad";
+    case "ANGRY":
+      return "angry";
+    case "INIT":
+      return action.payload;
+    default:
+      return state;
+  }
+}
+export const EmotionContext = createContext();
+export const EmotionContextProvider = ({ children }) => {
+  // js 자리
+  const [emotion, dispatch] = useReducer(reducer, initialState);
+  // 등록이 가능여부를 관리
+  const [isSelected, setIsSelected] = useState(false);
+
+  // 날짜를 생성하는 함수 : 2025-07-24 생성
+  const getTodayKey = () => {
+    return new Date().toISOString().slice(0, 10);
+  };
+
+  useEffect(() => {
+    const result = localStorage.getItem("emotionDay");
+    if (result) {
+      // { date: "2025-07-24", emotion: "happy"}
+      // JSON.parse 는 js 로 변환하기
+      const { date, emotion } = JSON.parse(result);
+
+      // 오늘 날짜를 읽어옮 : 2025-07-24
+      const today = getTodayKey();
+      // 오늘 날짜와 json 으로 불러온 날짜가 같다면.
+      if (date === today) {
+        dispatch({ type: "INIT", payload: emotion });
+        setIsSelected(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isSelected) {
+      const today = getTodayKey();
+      // { date: "2025-07-24", emotion: "happy"}
+      localStorage.setItem(
+        "emotionDay",
+        JSON.stringify({ date: today, emotion: emotion }),
+      );
+      // 셋팅 끝났으니까 버튼 비활성화
+      setIsSelected(true);
+    }
+  }, [emotion, isSelected]);
+  // jsx 자리
+  return (
+    // isSelected 를 추가해서 전달함.
+    <EmotionContext.Provider
+      value={{ emotion, dispatch, isSelected, setIsSelected }}
+    >
+      {children}
+    </EmotionContext.Provider>
+  );
+};
+```

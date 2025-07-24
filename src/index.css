@@ -1,13 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
-/* 글꼴 설정 */
-/* @font-face {
-  font-family: "ddag";
-  src: url("./assets/ddag.ttf");
-}
-@font-face {
-  font-family: "chap";
-  src: url("./assets/chab.ttf");
-} */
 
 * {
   margin: 0;
@@ -26,9 +17,30 @@ ol {
 html {
 }
 body {
-  font-family: "chab", "ddag";
+  font-family: "ddag";
 }
 
-.box {
-  background-color: hotpink !important;
+.app-container {
+  flex-direction: column;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+.dark {
+  background-color: #1e1b27;
+  color: #c2c1ee;
+}
+.light {
+  background-color: #fcf3fb;
+  color: #c2c1ee;
+}
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
